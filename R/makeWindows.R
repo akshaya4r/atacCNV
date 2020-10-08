@@ -9,16 +9,21 @@ makeWindows <- function(genome, blacklist, windowSize, slidingSize = 2e6, remove
   mcols(windows)$wStart <- start(windows)
   mcols(windows)$wEnd <- end(windows)
   message("Subtracting Blacklist...")
-  windowsBL <- lapply(seq_along(windows), function(x){
-    if(x %% 100 == 0){
-      message(sprintf("%s of %s", x, length(windows)))
-    }
-    gr <- GenomicRanges::setdiff(windows[x,], blacklist)
-    mcols(gr) <- mcols(windows[x,])
-    return(gr)
-  })
+  # windowsBL <- lapply(seq_along(windows), function(x){
+  #   if(x %% 100 == 0){
+  #     message(sprintf("%s of %s", x, length(windows)))
+  #   }
+  #   gr <- GenomicRanges::setdiff(windows[x,], blacklist)
+  #   mcols(gr) <- mcols(windows[x,])
+  #   return(gr)
+  # })
+  # names(windowsBL) <- paste0("w",seq_along(windowsBL))
+  # windowsBL <- unlist(GenomicRangesList(windowsBL), use.names = TRUE)
+  # mcols(windowsBL)$name <- names(windowsBL)
+  overlaps <- findOverlaps(windows, blacklist)
+  idx <- setdiff(1:length(windows), S4Vectors::queryHits(overlaps))
+  windowsBL <- windows[idx]
   names(windowsBL) <- paste0("w",seq_along(windowsBL))
-  windowsBL <- unlist(GenomicRangesList(windowsBL), use.names = TRUE)
   mcols(windowsBL)$name <- names(windowsBL)
   message("Adding Nucleotide Information...")
   windowSplit <- split(windowsBL, as.character(seqnames(windowsBL)))
@@ -30,6 +35,12 @@ makeWindows <- function(genome, blacklist, windowSize, slidingSize = 2e6, remove
     aFreq <- alphabetFrequency(Biostrings::Views(chrSeq, ranges(grx)))
     mcols(grx)$GC <- rowSums(aFreq[, c("G","C")]) / rowSums(aFreq)
     mcols(grx)$AT <- rowSums(aFreq[, c("A","T")]) / rowSums(aFreq)
+    tn5motif1 <- DNAString("GSSCTGGGS")
+    tn5motif2 <- reverseComplement(tn5motif1)
+    tn5bias1 <- Biostrings::vcountPattern(tn5motif1, Biostrings::Views(chrSeq, ranges(grx)), fixed=FALSE)
+    tn5bias2 <- Biostrings::vcountPattern(tn5motif2, Biostrings::Views(chrSeq, ranges(grx)), fixed=FALSE)
+    mcols(grx)$bias <- tn5bias1 + tn5bias2
+    # grx$tn5bias[which(grx$tn5bias > quantile(grx$tn5bias, 0.90))] <- 0
     return(grx)
   }) %>% GenomicRangesList %>% unlist %>% sortSeqlevels %>% sort
   windowNuc$N <- 1 - (windowNuc$GC + windowNuc$AT)
