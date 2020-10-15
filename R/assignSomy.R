@@ -1,9 +1,9 @@
 assign_somy <- function(seq_data, cluster, CNgrid.start=1.5){
   counts.normal <- seq_data
   cnmean <- sapply(split(counts.normal,cluster), function(x) {
-    qus <- quantile(x, c(0.01, 0.99))
+    qus <- stats::quantile(x, c(0.01, 0.99))
     y <- x[x >= qus[1] & x <= qus[2]]
-    y <- y[which(y > quantile(y, 0.75))]
+    y <- y[which(y > stats::quantile(y, 0.75))]
     if(sum(y) == 0 | length(y) == 0)
       y <- x
     mean(y)

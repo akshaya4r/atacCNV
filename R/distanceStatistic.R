@@ -23,15 +23,15 @@ dist_ad <- function(x, y, test){
     return(stat_ad)
   }
   if(test=='KS'){
-    return(ks.test(x,y)$statistic)
+    return(stats::ks.test(x,y)$statistic)
   }
-  if(test=='Bhattacharya'){
-    mux <- mean(x)
-    muy <- mean(y)
-    covx <- cov(as.matrix(x))
-    covy <- cov(as.matrix(y))
-    return(fpc::bhattacharyya.dist(mux, muy, covx, covy))
-  }
+  # if(test=='Bhattacharya'){
+  #   mux <- mean(x)
+  #   muy <- mean(y)
+  #   covx <- cov(as.matrix(x))
+  #   covy <- cov(as.matrix(y))
+  #   return(fpc::bhattacharyya.dist(mux, muy, covx, covy))
+  # }
 }
 
 

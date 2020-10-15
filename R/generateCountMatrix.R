@@ -3,7 +3,7 @@ generateCountMatrix <- function(windows, bamfiles, remove = c("chrM","chrX","chr
   #Keep only regions in filtered chromosomes
   windows   <- GenomeInfoDb::keepStandardChromosomes(windows, pruning.mode = "coarse")
   # fragments <- GenomeInfoDb::keepStandardChromosomes(fragments, pruning.mode = "coarse")
-  windows <- windows[seqnames(windows) %ni% remove]
+  # windows <- windows[seqnames(windows) %ni% remove]
   # fragments <- fragments[seqnames(fragments) %ni% remove]
 
   #Count Insertions in windows
@@ -39,7 +39,7 @@ generateCountMatrix <- function(windows, bamfiles, remove = c("chrM","chrX","chr
   windowSummary <- windows[keep,]
   countSummary <- counts[keep,]
 
-  se <- SummarizedExperiment(assays = SimpleList(counts = as.matrix(countSummary)), rowRanges = windowSummary)
+  se <- SummarizedExperiment(assays = list(counts = as.matrix(countSummary)), rowRanges = windowSummary)
   colnames(se) <- colnames(counts)
 
   return(se)
@@ -48,7 +48,7 @@ generateCountMatrix <- function(windows, bamfiles, remove = c("chrM","chrX","chr
 
 countInsertions <- function(windows, bamfiles, by = "RG"){
   # seqlevelsStyle(windows) <- 'NCBI'
-  counts_bam <- summarizeOverlaps(windows, bamfiles, singleEnd=TRUE, fragments=FALSE, mode='Union', param = ScanBamParam(mapqFilter=10), ignore.strand = TRUE)
+  counts_bam <- GenomicAlignments::summarizeOverlaps(windows, bamfiles, singleEnd=TRUE, fragments=FALSE, mode='Union', param = Rsamtools::ScanBamParam(mapqFilter=10), ignore.strand = TRUE)
   sparseM <- Matrix(assays(counts_bam)$counts, sparse = TRUE)
   frip <- 1
   total <- colSums(sparseM)
