@@ -37,11 +37,8 @@ generateCountMatrix <- function(windows, bamfiles, remove = c("chrM","chrX","chr
   # countSummary <- countSummary[keep,]
   keep <- which(windows$N < 0.001)
   windowSummary <- windows[keep,]
-<<<<<<< HEAD
   countSummary <- counts[keep,]
-=======
-  countSummary <- countSummary[keep,]
->>>>>>> 42fe52324aee225d722ea841f73233548074c47b
+  # countSummary <- countSummary[keep,]
 
   se <- SummarizedExperiment(assays = list(counts = as.matrix(countSummary)), rowRanges = windowSummary)
   colnames(se) <- colnames(counts)

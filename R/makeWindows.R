@@ -36,19 +36,11 @@ makeWindows <- function(genome, blacklist, windowSize, slidingSize = 2e6, exclud
     aFreq <- Biostrings::alphabetFrequency(Biostrings::Views(chrSeq, ranges(grx)))
     mcols(grx)$GC <- rowSums(aFreq[, c("G","C")]) / rowSums(aFreq)
     mcols(grx)$AT <- rowSums(aFreq[, c("A","T")]) / rowSums(aFreq)
-<<<<<<< HEAD
     tn5motif1 <- Biostrings::DNAString("GSSCTGGGS")
     tn5motif2 <- Biostrings::reverseComplement(tn5motif1)
     tn5bias1 <- Biostrings::vcountPattern(tn5motif1, Biostrings::Views(chrSeq, ranges(grx)), fixed=FALSE)
     tn5bias2 <- Biostrings::vcountPattern(tn5motif2, Biostrings::Views(chrSeq, ranges(grx)), fixed=FALSE)
     mcols(grx)$tn5bias <- tn5bias1 + tn5bias2
-=======
-    tn5motif1 <- DNAString("GSSCTGGGS")
-    tn5motif2 <- reverseComplement(tn5motif1)
-    tn5bias1 <- Biostrings::vcountPattern(tn5motif1, Biostrings::Views(chrSeq, ranges(grx)), fixed=FALSE)
-    tn5bias2 <- Biostrings::vcountPattern(tn5motif2, Biostrings::Views(chrSeq, ranges(grx)), fixed=FALSE)
-    mcols(grx)$bias <- tn5bias1 + tn5bias2
->>>>>>> 42fe52324aee225d722ea841f73233548074c47b
     # grx$tn5bias[which(grx$tn5bias > quantile(grx$tn5bias, 0.90))] <- 0
     return(grx)
   }) %>% GRangesList %>% unlist %>% sortSeqlevels %>% sort
