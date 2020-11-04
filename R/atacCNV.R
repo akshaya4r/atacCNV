@@ -12,6 +12,7 @@
 #' @import SummarizedExperiment
 #' @import magrittr
 #' @importFrom GenomicAlignments summarizeOverlaps
+#' @export
 
 
 # Imports:
