@@ -48,8 +48,8 @@ atacCNV <- function(input, outdir, blacklist, windowSize){
       file_fragments <- fread(input)
       colnames(file_fragments) <- c('seqnames','start','end','barcode','pcr')
       fragments <- as_granges(file_fragments)
+      counts <- generateCountMatrix(windows, bamfiles, remove = c("chrM","chrX","chrY"))
     }
-
     saveRDS(counts, file.path(outdir,"count_summary.rds"))
   }
 

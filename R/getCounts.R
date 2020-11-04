@@ -6,6 +6,7 @@ countInsertions <- function(windows, reads) {
 
 countInsertions.BamFileList <- function(windows, reads){
   # seqlevelsStyle(windows) <- 'NCBI'
+  message("Counting reads from bam files .. ")
   counts_bam <- GenomicAlignments::summarizeOverlaps(windows, reads, singleEnd=TRUE, fragments=FALSE, mode='Union', param = Rsamtools::ScanBamParam(mapqFilter=10), ignore.strand = TRUE)
   sparseM <- Matrix(assays(counts_bam)$counts, sparse = TRUE)
   # frip <- 1
@@ -15,6 +16,7 @@ countInsertions.BamFileList <- function(windows, reads){
 }
 
 countInsertions.GRanges <- function(windows, reads, by = "barcode", minFrags = 5000){
+  message("Counting reads from fragments file .. ")
   tabRG <- table(reads[by])
   keep <- names(tabRG)[which(tabRG >= minFrags)]
   fragments <- fragments[fragments$RG %in% keep,]
