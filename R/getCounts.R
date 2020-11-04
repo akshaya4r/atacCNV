@@ -1,0 +1,30 @@
+countInsertions <- function(windows, reads) {
+  UseMethod("countInsertions")
+}
+
+countInsertions.BamFileList <- function(windows, reads){
+  # seqlevelsStyle(windows) <- 'NCBI'
+  counts_bam <- GenomicAlignments::summarizeOverlaps(windows, reads, singleEnd=TRUE, fragments=FALSE, mode='Union', param = Rsamtools::ScanBamParam(mapqFilter=10), ignore.strand = TRUE)
+  sparseM <- Matrix(assays(counts_bam)$counts, sparse = TRUE)
+  # frip <- 1
+  # total <- colSums(sparseM)
+  # out <- list(counts = sparseM, frip = frip, total = total)
+  return(sparseM)
+}
+
+countInsertions.GRanges <- function(windows, reads, by = "barcode", minFrags = 5000){
+  tabRG <- table(reads[by])
+  keep <- names(tabRG)[which(tabRG >= minFrags)]
+  fragments <- fragments[fragments$RG %in% keep,]
+  fragments <- sort(sortSeqlevels(fragments))
+  overlapDF <- DataFrame(findOverlaps(windows, reads, ignore.strand = TRUE, maxgap=-1L, minoverlap=0L, type = "any"))
+  overlapDF$name <- mcols(reads)[overlapDF[, 2], by]
+  overlapTDF <- transform(overlapDF, id = match(name, unique(name)))
+  sparseM <- Matrix::sparseMatrix(
+    i = overlapTDF[, 1],
+    j = overlapTDF[, 4],
+    x = rep(1, nrow(overlapTDF)),
+    dims = c(length(query), length(unique(overlapDF$name))))
+  colnames(sparseM) <- unique(overlapDF$name)
+  return(sparseM)
+}

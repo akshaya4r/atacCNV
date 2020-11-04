@@ -1,14 +1,3 @@
-# For scCAT K562, it has been aligned to the NCBI reference. Change seq level style in the countInsertion fn
-
-# library(matrixStats)
-# library(readr)
-# library(edgeR)
-# library(biomaRt)
-# library(ggplot2)
-# library(grid)
-# library(cowplot)
-# library(kSamples)
-
 #' @import stats
 #' @import GenomicRanges
 #' @import plyranges
@@ -24,16 +13,24 @@
 #' @import magrittr
 #' @importFrom GenomicAlignments summarizeOverlaps
 
-atacCNV <- function(indir, outdir, blacklist, windowSize){
-
-  bamfiles <- Rsamtools::BamFileList(list.files(indir, pattern = ".bam$", full.names = TRUE), yieldSize=100000)
-  blacklist <- read_bed(blacklist)
-  print(bamfiles)
-  print(outdir)
+atacCNV <- function(input, outdir, blacklist, windowSize){
 
   if(!file.exists(file.path(outdir,"count_summary.rds"))) {
+    blacklist <- read_bed(blacklist)
     windows <- makeWindows(genome = BSgenome.Hsapiens.UCSC.hg38, blacklist = blacklist, windowSize)
-    counts <- generateCountMatrix(windows, bamfiles, remove = c("chrM","chrX","chrY"))
+    print(outdir)
+
+    if(file_test("-d", input)){
+      bamfiles <- Rsamtools::BamFileList(list.files(input, pattern = ".bam$", full.names = TRUE), yieldSize=100000)
+      print(bamfiles)
+      counts <- generateCountMatrix(windows, bamfiles, remove = c("chrM","chrX","chrY"))
+    }
+    else if(file_test("-f", input)){
+      file_fragments <- fread(input)
+      colnames(file_fragments) <- c('seqnames','start','end','barcode','pcr')
+      fragments <- as_granges(file_fragments)
+    }
+
     saveRDS(counts, file.path(outdir,"count_summary.rds"))
   }
 
