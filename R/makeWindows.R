@@ -1,3 +1,5 @@
+#' @export
+
 makeWindows <- function(genome, blacklist, windowSize, slidingSize = 2e6, exclude = c("chrM","chrX","chrY")){
   #chromSizes <- GRanges(names(seqlengths(genome)), IRanges(1, seqlengths(genome)))
   #chromSizes <- GenomeInfoDb::keepStandardChromosomes(chromSizes, pruning.mode = "coarse")

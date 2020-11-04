@@ -36,14 +36,15 @@ atacCNV <- function(input, outdir, blacklist, windowSize){
   if(!file.exists(file.path(outdir,"count_summary.rds"))) {
     blacklist <- read_bed(blacklist)
     windows <- makeWindows(genome = BSgenome.Hsapiens.UCSC.hg38, blacklist = blacklist, windowSize)
-    print(outdir)
 
     if(file_test("-d", input)){
+      print("Obtaining bam file list")
       bamfiles <- Rsamtools::BamFileList(list.files(input, pattern = ".bam$", full.names = TRUE), yieldSize=100000)
       print(bamfiles)
       counts <- generateCountMatrix(windows, bamfiles, remove = c("chrM","chrX","chrY"))
     }
     else if(file_test("-f", input)){
+      print("Obtaining the fragments tsv file")
       file_fragments <- fread(input)
       colnames(file_fragments) <- c('seqnames','start','end','barcode','pcr')
       fragments <- as_granges(file_fragments)

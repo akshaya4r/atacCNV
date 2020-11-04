@@ -1,3 +1,5 @@
+#' @export
+
 assign_somy <- function(seq_data, cluster, CNgrid.start=1.5){
   counts.normal <- seq_data
   cnmean <- sapply(split(counts.normal,cluster), function(x) {

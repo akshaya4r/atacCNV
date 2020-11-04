@@ -1,3 +1,5 @@
+#' @export
+
 countInsertions <- function(windows, reads) {
   UseMethod("countInsertions")
 }

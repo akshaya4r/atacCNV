@@ -1,4 +1,6 @@
-dist_ad <- function(x, y, test){
+#' @export
+
+dist_ad <- function(x, y, test='AD'){
   if(test=='AD'){
     x <- as.numeric(x); y <- as.numeric(y)
     n <- as.numeric(length(x))

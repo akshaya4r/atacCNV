@@ -1,3 +1,5 @@
+#' @export
+
 generateCountMatrix <- function(windows, reads, remove = c("chrM","chrX","chrY")){
 
   #Keep only regions in filtered chromosomes
