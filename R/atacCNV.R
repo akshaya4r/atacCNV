@@ -35,6 +35,7 @@
 atacCNV <- function(input, outdir, blacklist, windowSize, reuse.existing=FALSE){
 
   if(reuse.existing==FALSE){
+    print("Removing old file from the output folder")
     file.remove(list.files(outdir, full.names=TRUE))
   }
 
