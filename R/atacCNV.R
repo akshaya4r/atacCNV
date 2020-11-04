@@ -31,6 +31,8 @@
 # BiocGenerics (>= 0.32.0),
 # S4Vectors (>= 0.24.2)
 
+message("--------------- Calling CNV from scATAC-seq ---------------")
+
 atacCNV <- function(input, outdir, blacklist, windowSize){
 
   if(!file.exists(file.path(outdir,"count_summary.rds"))) {
