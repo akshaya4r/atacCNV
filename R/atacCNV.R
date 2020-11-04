@@ -12,6 +12,7 @@
 #' @import SummarizedExperiment
 #' @import magrittr
 #' @importFrom GenomicAlignments summarizeOverlaps
+#' @return \code{NULL}
 #' @export
 
 
@@ -31,7 +32,11 @@
 # BiocGenerics (>= 0.32.0),
 # S4Vectors (>= 0.24.2)
 
-atacCNV <- function(input, outdir, blacklist, windowSize){
+atacCNV <- function(input, outdir, blacklist, windowSize, reuse.existing=FALSE){
+
+  if(reuse.existing==FALSE){
+    file.remove(list.files(outdir, full.names=TRUE))
+  }
 
   if(!file.exists(file.path(outdir,"count_summary.rds"))) {
     blacklist <- read_bed(blacklist)
