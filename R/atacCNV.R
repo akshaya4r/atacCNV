@@ -13,6 +13,23 @@
 #' @import magrittr
 #' @importFrom GenomicAlignments summarizeOverlaps
 
+
+# Imports:
+# GenomicAlignments (>= 1.22.1),
+# Matrix (>= 1.2.18),
+# SummarizedExperiment (>= 1.16.1),
+# data.table (>= 1.12.8),
+# plyranges (>= 1.6.10),
+# Rsamtools (>= 2.2.1),
+# GenomeInfoDb (>= 1.22.0),
+# BSgenome.Hsapiens.UCSC.hg38 (>= 1.4.1),
+# GenomicRanges (>= 1.38.0),
+# stats (>= 3.6.1),
+# Biostrings (>= 2.54.0),
+# magrittr (>= 1.5),
+# BiocGenerics (>= 0.32.0),
+# S4Vectors (>= 0.24.2)
+
 atacCNV <- function(input, outdir, blacklist, windowSize){
 
   if(!file.exists(file.path(outdir,"count_summary.rds"))) {
