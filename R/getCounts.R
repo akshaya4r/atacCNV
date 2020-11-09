@@ -28,7 +28,7 @@ countInsertions.GRanges <- function(windows, reads, by = "barcode", minFrags = 5
     i = overlapTDF[, 1],
     j = overlapTDF[, 4],
     x = rep(1, nrow(overlapTDF)),
-    dims = c(length(query), length(unique(overlapDF$name))))
+    dims = c(length(windows), length(unique(overlapDF$name))))
   colnames(sparseM) <- unique(overlapDF$name)
   return(sparseM)
 }
