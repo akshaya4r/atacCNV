@@ -15,7 +15,7 @@ countInsertions.BamFileList <- function(windows, reads){
   return(sparseM)
 }
 
-countInsertions.GRanges <- function(windows, reads, by = "barcode", minFrags = 5000){
+countInsertions.GRanges <- function(windows, reads, by = "barcode", minFrags = 20000){
   message("Counting reads from fragments file .. ")
   tabRG <- table(mcols(reads)[[by]])
   keep <- names(tabRG)[which(tabRG >= minFrags)]
