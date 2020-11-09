@@ -63,6 +63,7 @@ atacCNV <- function(input, outdir, blacklist, windowSize, reuse.existing=FALSE){
 
   counts <- readRDS(file.path(outdir,"count_summary.rds"))
   peaks <- as.data.table(assays(counts)$counts)
+  colnames(peaks) <- paste0('cell-', colnames(peaks))
   rowinfo <- as.data.table(rowRanges(counts))
   peaks <- cbind(rowinfo, peaks)
 
@@ -71,7 +72,7 @@ atacCNV <- function(input, outdir, blacklist, windowSize, reuse.existing=FALSE){
       fit <- stats::loess(x ~ peaks$GC)
       correction <- median(x) / fit$fitted
       as.integer(round(x * correction))
-    }), .SDcols = patterns("bam")]
+    }), .SDcols = patterns("cell-")]
     saveRDS(corrected_counts, file.path(outdir,"counts_gc_corrected.rds"))
   }
 
@@ -97,7 +98,7 @@ atacCNV <- function(input, outdir, blacklist, windowSize, reuse.existing=FALSE){
       #       cl <- cl + length(unique(item))
       # }
       # return(clusters)
-    }), .SDcols = patterns("bam")]
+    }), .SDcols = patterns("cell-")]
     saveRDS(clusters_ad, file.path(outdir, "results_gc_corrected.rds"))
   }
   print("Finished successfully")
