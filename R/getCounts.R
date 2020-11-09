@@ -19,7 +19,7 @@ countInsertions.GRanges <- function(windows, reads, by = "barcode", minFrags = 2
   message("Counting reads from fragments file .. ")
   tabRG <- table(mcols(reads)[[by]])
   keep <- names(tabRG)[which(tabRG >= minFrags)]
-  reads <- reads[reads$RG %in% keep,]
+  reads <- reads[mcols(reads)[[by]] %in% keep,]
   reads <- sort(sortSeqlevels(reads))
   overlapDF <- DataFrame(findOverlaps(windows, reads, ignore.strand = TRUE, maxgap=-1L, minoverlap=0L, type = "any"))
   overlapDF$name <- mcols(reads)[overlapDF[, 2], by]
