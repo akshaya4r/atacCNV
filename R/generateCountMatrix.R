@@ -7,7 +7,7 @@ generateCountMatrix <- function(windows, reads, remove = c("chrM","chrX","chrY")
 
   #Count Insertions in windows
   message("Getting Counts...")
-  counts <- countInsertions(windows, reads)[[1]]
+  counts <- countInsertions(windows, reads)
 
   #Keep only regions with less than 0.1% N
   keep <- which(windows$N < 0.001)
