@@ -47,7 +47,7 @@ atacCNV <- function(input, outdir, blacklist, windowSize, reuse.existing=FALSE){
       print("Obtaining bam file list")
       bamfiles <- Rsamtools::BamFileList(list.files(input, pattern = ".bam$", full.names = TRUE), yieldSize=100000)
       print(bamfiles)
-      counts <- generateCountMatrix(windows, bamfiles, remove = c("chrM","chrX","chrY"))
+      counts <- generateCountMatrix(bamfiles, windows, remove = c("chrM","chrX","chrY"))
     }
     else if(file_test("-f", input)){
       print("Obtaining the fragments tsv file")
@@ -56,7 +56,7 @@ atacCNV <- function(input, outdir, blacklist, windowSize, reuse.existing=FALSE){
       fragments <- as_granges(file_fragments)
       print(head(fragments))
       print(names(fragments))
-      counts <- generateCountMatrix(windows, fragments, remove = c("chrM","chrX","chrY"))
+      counts <- generateCountMatrix(fragments, windows, remove = c("chrM","chrX","chrY"))
     }
     saveRDS(counts, file.path(outdir,"count_summary.rds"))
   }

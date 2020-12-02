@@ -1,10 +1,10 @@
 #' @export
 
-countInsertions <- function(windows, reads) {
+countInsertions <- function(reads, windows) {
   UseMethod("countInsertions")
 }
 
-countInsertions.BamFileList <- function(windows, reads){
+countInsertions.BamFileList <- function(reads, windows){
   # seqlevelsStyle(windows) <- 'NCBI'
   message("Counting reads from bam files .. ")
   counts_bam <- GenomicAlignments::summarizeOverlaps(windows, reads, singleEnd=TRUE, fragments=FALSE, mode='Union', param = Rsamtools::ScanBamParam(mapqFilter=10), ignore.strand = TRUE)
@@ -15,7 +15,7 @@ countInsertions.BamFileList <- function(windows, reads){
   return(sparseM)
 }
 
-countInsertions.GRanges <- function(windows, reads, by = "barcode", minFrags = 20000){
+countInsertions.GRanges <- function(reads, windows, by = "barcode", minFrags = 20000){
   message("Counting reads from fragments file .. ")
   tabRG <- table(mcols(reads)[[by]])
   keep <- names(tabRG)[which(tabRG >= minFrags)]
