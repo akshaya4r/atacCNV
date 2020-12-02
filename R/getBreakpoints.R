@@ -1,6 +1,6 @@
 #' @export
 
-getbp <- function(seq_data, minsize=3, k=3, test='AD', pcutoff=0.000001){
+getbp <- function(seq_data, minsize=5, k=3, test='AD', pcutoff=0.000001){
   bp <- vector()
   distbp <- vector()
   for(iter in 1:k) {
@@ -38,20 +38,17 @@ getbp <- function(seq_data, minsize=3, k=3, test='AD', pcutoff=0.000001){
   return(res)
 }
 
-get_sig_bp <- function(seq_data, minsize=3, test='AD', pcutoff=0.000001) {
+get_sig_bp <- function(seq_data, minsize=5, test='AD', pcutoff=0.000001) {
   bp_sig <- list()
   sig <- NULL
   permutations <- list()
   for(iter in 1:5){
     permutations[[iter]] <- sample(seq_data, size=length(seq_data), replace = FALSE)
   }
-  permuted_dist <- sapply(permutations, function(x){max(seq_dist_ad(x, minsize=3, test='AD'))})
-  print(permuted_dist)
-  dist_vect <- seq_dist_ad(seq_data, minsize=3, test='AD')
+  permuted_dist <- sapply(permutations, function(x){max(seq_dist_ad(x, minsize=20, test='AD'))})
+  dist_vect <- seq_dist_ad(seq_data, minsize=20, test='AD')
   dist_at_bp <- max(dist_vect)
   tt <- t.test(permuted_dist, mu=dist_at_bp, alternative = 'less')
-  print(tt$p.value)
-  print(pcutoff)
   if(tt$p.value < pcutoff) {
     sig <- TRUE
   } else {
