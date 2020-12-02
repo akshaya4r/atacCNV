@@ -37,7 +37,7 @@ dist_ad <- function(x, y, test='AD'){
 }
 
 
-seq_dist_ad <- function(seq_data, minsize, test) {
+seq_dist_ad <- function(seq_data, minsize=3, test='AD') {
   bp1 <- seq(from = 1, to = length(seq_data), by = minsize)
   distlist <- vector()
   for(i1 in 1:length(bp1)){
