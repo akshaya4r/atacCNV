@@ -87,7 +87,7 @@ atacCNV <- function(input, outdir, blacklist, windowSize, reuse.existing=FALSE){
       print("Calculating distance AD")
       results <- lapply(peaksperchrom, function(x2) {
         # x2 <- runmed(x2, k=11, endrule = 'median')
-        getbp(x2, k = k, minsize = minsize, test='AD')
+        getbp(x2, k = k, minsize = minsize, test='AD', pcutoff=0.000001)
       })
       # clusterperchrom <- lapply(results, '[[', 3)
       # cl <- 0
