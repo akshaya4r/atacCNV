@@ -49,10 +49,14 @@ get_sig_bp <- function(seq_data, minsize=5, test='AD', pcutoff=0.000001) {
   dist_vect <- seq_dist_ad(seq_data, minsize=minsize, test=test)
   dist_at_bp <- max(dist_vect)
   tt <- t.test(permuted_dist, mu=dist_at_bp, alternative = 'less')
-  if(tt$p.value < pcutoff) {
-    sig <- TRUE
-  } else {
+  if(is.nan(tt$p.value)) {
     sig <- FALSE
+  } else{
+    if(tt$p.value < pcutoff) {
+      sig <- TRUE
+    } else {
+      sig <- FALSE
+    }
   }
   bp_sig[['bp']] <- which.max(dist_vect)*minsize
   bp_sig[['sig']] <- sig
