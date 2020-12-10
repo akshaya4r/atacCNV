@@ -46,8 +46,10 @@ get_sig_bp <- function(seq_data, minsize=5, test='AD', pcutoff=0.000001) {
     permutations[[iter]] <- sample(seq_data, size=length(seq_data), replace = FALSE)
   }
   permuted_dist <- sapply(permutations, function(x){max(seq_dist_ad(x, minsize=minsize*5, test='AD'))})
+  print(permuted_dist)
   dist_vect <- seq_dist_ad(seq_data, minsize=minsize, test=test)
   dist_at_bp <- max(dist_vect)
+  print(dist_at_bp)
   if(mean(permuted_dist) != 0) {
     tt <- t.test(permuted_dist, mu=dist_at_bp, alternative = 'less')
     if(is.nan(tt$p.value)) {
