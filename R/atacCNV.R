@@ -32,7 +32,7 @@
 # BiocGenerics (>= 0.32.0),
 # S4Vectors (>= 0.24.2)
 
-atacCNV <- function(input, outdir, blacklist, windowSize, reuse.existing=FALSE){
+atacCNV <- function(input, outdir, blacklist, windowSize, reuse.existing=FALSE, get_sig=TRUE){
 
   if(reuse.existing==FALSE){
     print("Removing old file from the output folder")
@@ -88,7 +88,7 @@ atacCNV <- function(input, outdir, blacklist, windowSize, reuse.existing=FALSE){
       results <- lapply(peaksperchrom, function(x2) {
         # x2 <- runmed(x2, k=11, endrule = 'median')
         print("Running chromosome")
-        getbp(x2, k = k, minsize = minsize, test='AD', pcutoff=0.000001)
+        getbp(x2, k = k, minsize = minsize, test='AD', pcutoff=0.000001, get_sig=TRUE)
       })
       # clusterperchrom <- lapply(results, '[[', 3)
       # cl <- 0

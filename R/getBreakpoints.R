@@ -1,11 +1,11 @@
 #' @export
 
-getbp <- function(seq_data, minsize=5, k=3, test='AD', pcutoff=0.000001){
+getbp <- function(seq_data, minsize=5, k=3, test='AD', pcutoff=0.0001, get_sig=TRUE){
   bp <- vector()
   distbp <- vector()
   for(iter in 1:k) {
     seq_k_data <- splitAt(seq_data, (bp))
-    sig_bp_res <- lapply(seq_k_data, function(x) {get_sig_bp(x, minsize, test, pcutoff)})
+    sig_bp_res <- lapply(seq_k_data, function(x) {get_sig_bp(x, minsize, test, pcutoff, get_sig)})
     if(length(bp)==0){
       add_to_bp <- 0
     } else{
@@ -38,32 +38,49 @@ getbp <- function(seq_data, minsize=5, k=3, test='AD', pcutoff=0.000001){
   return(res)
 }
 
-get_sig_bp <- function(seq_data, minsize=5, test='AD', pcutoff=0.000001) {
-  bp_sig <- list()
-  sig <- NULL
-  permutations <- list()
-  for(iter in 1:5){
-    permutations[[iter]] <- sample(seq_data, size=length(seq_data), replace = FALSE)
-  }
-  permuted_dist <- sapply(permutations, function(x){max(seq_dist_ad(x, minsize=minsize*5, test='AD'))})
-  dist_vect <- seq_dist_ad(seq_data, minsize=minsize, test=test)
-  dist_at_bp <- max(dist_vect)
-  if(mean(permuted_dist) != 0) {
-    if(length(unique(permuted_dist))==1){
-      permuted_dist[1] <- permuted_dist[1] + 0.005
-    }
-    tt <- t.test(permuted_dist, mu=dist_at_bp, alternative = 'less')
-    if(is.nan(tt$p.value)) {
+get_sig_bp <- function(seq_data, minsize=5, test='AD', pcutoff=0.0001, get_sig=TRUE) {
+  if(get_sig==TRUE){
+    bp_sig <- list()
+    sig <- NULL
+    # permutations <- list()
+    # for(iter in 1:5){
+    #   permutations[[iter]] <- sample(seq_data, size=length(seq_data), replace = FALSE)
+    # }
+    # permuted_dist <- sapply(permutations, function(x){max(seq_dist_ad(x, minsize=minsize*5, test='AD'))})
+    dist_vect <- seq_dist_ad(seq_data, minsize=minsize, test=test)
+    dist_at_bp <- max(dist_vect)
+    # tt <- t.test(dist_vect, mu=dist_at_bp, alternative = 'less')
+    # print(tt)
+    # H0 : The median of dist_vect = dist_at_bp
+    # H1 : The median of dist_vect is less than dist_at_bp
+    tt <- wilcox.test(dist_vect, mu=dist_at_bp, alternative = 'less')
+    if(tt$p.value < pcutoff) {
+      sig <- TRUE
+    } else {
       sig <- FALSE
-    } else{
-      if(tt$p.value < pcutoff) {
-        sig <- TRUE
-      } else {
-        sig <- FALSE
-      }
     }
+    # if(mean(permuted_dist) != 0) {
+    #   if(length(unique(permuted_dist))==1){
+    #     permuted_dist[1] <- permuted_dist[1] + 0.005
+    #   }
+    #   tt <- t.test(permuted_dist, mu=dist_at_bp, alternative = 'less')
+    #   if(is.nan(tt$p.value)) {
+    #     sig <- FALSE
+    #   } else{
+    #     if(tt$p.value < pcutoff) {
+    #       sig <- TRUE
+    #     } else {
+    #       sig <- FALSE
+    #     }
+    #   }
+    # } else {
+    #   sig <- FALSE
+    # }
   } else {
-    sig <- FALSE
+    bp_sig <- list()
+    dist_vect <- seq_dist_ad(seq_data, minsize=minsize, test=test)
+    dist_at_bp <- max(dist_vect)
+    sig <- TRUE
   }
   bp_sig[['bp']] <- which.max(dist_vect)*minsize
   bp_sig[['sig']] <- sig
