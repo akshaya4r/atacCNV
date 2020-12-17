@@ -32,7 +32,8 @@
 # BiocGenerics (>= 0.32.0),
 # S4Vectors (>= 0.24.2)
 
-atacCNV <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapiens.UCSC.hg38", test='AD', reuse.existing=FALSE, get_sig=TRUE){
+atacCNV <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapiens.UCSC.hg38",
+                    test='AD', reuse.existing=FALSE, get_sig=TRUE, exclude=c("chrM","chrX","chrY")){
 
   if(reuse.existing==FALSE){
     print("Removing old file from the output folder")
@@ -41,7 +42,7 @@ atacCNV <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapi
 
   if(!file.exists(file.path(outdir,"count_summary.rds"))) {
     blacklist <- read_bed(blacklist)
-    windows <- makeWindows(genome = genome, blacklist = blacklist, windowSize)
+    windows <- makeWindows(genome = genome, blacklist = blacklist, windowSize, exlude=exclude)
 
     if(file_test("-d", input)){
       print("Obtaining bam file list")
