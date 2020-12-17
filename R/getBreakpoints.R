@@ -79,7 +79,9 @@ get_sig_bp <- function(seq_data, minsize=5, test='AD', pcutoff=0.0001, get_sig=T
   } else {
     print("Not testing for significance")
     bp_sig <- list()
+    print(seq_data)
     dist_vect <- seq_dist_ad(seq_data, minsize=minsize, test=test)
+    print(dist_vect)
     dist_at_bp <- max(dist_vect)
     sig <- TRUE
   }
