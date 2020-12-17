@@ -12,7 +12,6 @@ makeWindows <- function(genome, blacklist, windowSize, slidingSize = 2e6, includ
   mcols(windows)$wSeq <- as.character(seqnames(windows))
   mcols(windows)$wStart <- BiocGenerics::start(windows)
   mcols(windows)$wEnd <- BiocGenerics::end(windows)
-  print(windows)
   message("Subtracting Blacklist...")
   # windowsBL <- lapply(seq_along(windows), function(x){
   #   if(x %% 100 == 0){
