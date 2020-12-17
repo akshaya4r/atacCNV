@@ -86,5 +86,6 @@ get_sig_bp <- function(seq_data, minsize=5, test='AD', pcutoff=0.0001, get_sig=T
   bp_sig[['bp']] <- which.max(dist_vect)*minsize
   bp_sig[['sig']] <- sig
   bp_sig[['dist']] <- dist_at_bp
+  print(bp_sig)
   return(bp_sig)
 }
