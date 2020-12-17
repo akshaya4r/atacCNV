@@ -102,9 +102,53 @@ atacCNV <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapi
     }), .SDcols = patterns("cell-")]
     saveRDS(clusters_ad, file.path(outdir, "results_gc_corrected.rds"))
   }
-  print("Finished successfully")
+  print("Successfully identified breakpoints")
 
-  # somies_ad <- Map(function(seq_data,cluster) {
-  #   assign_somy(seq_data, cluster)
-  # }, peaks[, .SD, .SDcols = patterns("bam")], clusters_ad)
+  clusters_ad <- readRDS(file.path(outdir,"results_gc_corrected.rds"))
+  breakpoints <- lapply(clusters_ad, function(x) { lapply(x,'[[', 1) })
+  distances <- lapply(clusters_ad, function(x) { lapply(x,'[[', 2) })
+  result.dt <- Map(function(bp, dist){
+    names(bp) <- paste0('chr',1:22)
+    names(dist) <- paste0('chr',1:22)
+    dtlist <- Map(function(per_chr_bp, per_chr_dist){
+      data.table(per_chr_bp, per_chr_dist)
+    }, bp, dist)
+    per_cell_dt <- rbindlist(dtlist, idcol = 'Chr')
+    per_cell_dt <- per_cell_dt[order(-per_chr_dist)]
+  }, breakpoints, distances)
+
+  pruned_result.dt <- lapply(result.dt, function(x){
+    threshold_dist_values(x)
+  })
+  print("Successfully discarded irrelevant breakpoints")
+
+
+  clusters_pruned <- as.data.table(Map(function(seq_data, bp){
+    per_chrom_seq_data <- split(seq_data, peaks$seqnames)
+    per_chrom_bp <- split(bp, bp$Chr)
+    clusters_per_chrom <- Map(function(seq_data2, bp2){
+      if(is.null(bp2)){
+        return(rep(1, length(seq_data2)))
+      } else {
+        bp_to_cluster <- sort(c(1,length(seq_data2)+1,bp2$per_chr_bp))
+        return(rep(1:length(diff(bp_to_cluster)),diff(bp_to_cluster)))
+      }
+    }, per_chrom_seq_data[paste0('chr',1:22)], per_chrom_bp[paste0('chr',1:22)])
+    cl <- 0
+    clusters <- vector()
+    for(item in clusters_per_chrom){
+      item <- item + cl
+      clusters <- append(clusters, item)
+      cl <- cl + length(unique(item))
+    }
+    return(clusters)
+  },  peaks[, .SD, .SDcols = patterns("cell-")], pruned_result.dt))
+
+  somies_ad <- Map(function(seq_data,cluster) {
+    assign_somy(seq_data, cluster)
+  }, peaks[, .SD, .SDcols = patterns("cell-")], clusters_pruned)
+  print("Successfully assigned somies")
+
+  plot_karyo(somies_ad = somies_ad, outdir = outdir, peaks = peaks)
+  print("Successfully plotted karyogram")
 }
