@@ -15,7 +15,7 @@ plot_karyo <- function(somies_ad, outdir, peaks){
   somies.dt$rn <- as.numeric(rownames(somies.dt))
   somies_melted <- melt(somies.dt, id.vars=c('rn','seqnames'))
   somies_melted$value <- as.factor(paste0(somies_melted$value,'-somy'))
-  counts_t <- t(somies.dt[ ,.SD, .SDcols=patterns('bam')])
+  counts_t <- t(somies.dt[ ,.SD, .SDcols=patterns('cell-')])
   hc_counts <- hclust(dist(counts_t, method = 'canberra'))
   ord <- hc_counts$order
   dhc <- stats::as.dendrogram(hc_counts)
