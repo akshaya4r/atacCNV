@@ -32,12 +32,13 @@
 # BiocGenerics (>= 0.32.0),
 # S4Vectors (>= 0.24.2)
 
-atacCNV <- function(input, outdir, blacklist, windowSize, genome=BSgenome.Hsapiens.UCSC.hg38, test='AD', reuse.existing=FALSE, get_sig=TRUE){
+atacCNV <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapiens.UCSC.hg38", test='AD', reuse.existing=FALSE, get_sig=TRUE){
 
   if(reuse.existing==FALSE){
     print("Removing old file from the output folder")
     file.remove(list.files(outdir, full.names=TRUE))
   }
+  genome <- getFromNamespace(genome, ns=genome)
 
   if(!file.exists(file.path(outdir,"count_summary.rds"))) {
     blacklist <- read_bed(blacklist)
