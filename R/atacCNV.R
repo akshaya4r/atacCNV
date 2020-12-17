@@ -9,6 +9,8 @@
 #' @import GenomeInfoDb
 #' @import Biostrings
 #' @import Matrix
+#' @import ggplot2
+#' @import cowplot
 #' @import SummarizedExperiment
 #' @import magrittr
 #' @importFrom GenomicAlignments summarizeOverlaps

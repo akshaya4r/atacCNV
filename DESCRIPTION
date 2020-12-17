@@ -27,7 +27,9 @@ Depends:
     Biostrings,
     magrittr,
     BiocGenerics,
-    S4Vectors
+    S4Vectors,
+    ggplot2,
+    cowplot
 Imports: 
     GenomicAlignments,
     Matrix,
@@ -42,4 +44,6 @@ Imports:
     Biostrings,
     magrittr,
     BiocGenerics,
-    S4Vectors
+    S4Vectors,
+    ggplot2,
+    cowplot
