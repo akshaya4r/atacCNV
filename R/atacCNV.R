@@ -42,7 +42,7 @@ atacCNV <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapi
 
   if(!file.exists(file.path(outdir,"count_summary.rds"))) {
     blacklist <- read_bed(blacklist)
-    windows <- makeWindows(genome = genome, blacklist = blacklist, windowSize, exlude=exclude)
+    windows <- makeWindows(genome = genome, blacklist = blacklist, windowSize, exclude=exclude)
 
     if(file_test("-d", input)){
       print("Obtaining bam file list")
