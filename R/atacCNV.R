@@ -38,7 +38,6 @@ atacCNV <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapi
     print("Removing old file from the output folder")
     file.remove(list.files(outdir, full.names=TRUE))
   }
-  genome <- getFromNamespace(genome, ns=genome)
 
   if(!file.exists(file.path(outdir,"count_summary.rds"))) {
     blacklist <- read_bed(blacklist)
