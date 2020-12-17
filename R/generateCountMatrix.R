@@ -1,6 +1,6 @@
 #' @export
 
-generateCountMatrix <- function(reads, windows, remove = c("chrM","chrX","chrY")){
+generateCountMatrix <- function(reads, windows){
 
   #Keep only regions in filtered chromosomes
   windows   <- GenomeInfoDb::keepStandardChromosomes(windows, pruning.mode = "coarse")

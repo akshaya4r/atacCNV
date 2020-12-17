@@ -33,7 +33,7 @@
 # S4Vectors (>= 0.24.2)
 
 atacCNV <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapiens.UCSC.hg38",
-                    test='AD', reuse.existing=FALSE, get_sig=TRUE, exclude=c("chrM","chrX","chrY")){
+                    test='AD', reuse.existing=FALSE, get_sig=TRUE, include=paste0('chr',1:22)){
 
   if(reuse.existing==FALSE){
     print("Removing old file from the output folder")
@@ -42,13 +42,13 @@ atacCNV <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapi
 
   if(!file.exists(file.path(outdir,"count_summary.rds"))) {
     blacklist <- read_bed(blacklist)
-    windows <- makeWindows(genome = genome, blacklist = blacklist, windowSize, exclude=exclude)
+    windows <- makeWindows(genome = genome, blacklist = blacklist, windowSize, include=include)
 
     if(file_test("-d", input)){
       print("Obtaining bam file list")
       bamfiles <- Rsamtools::BamFileList(list.files(input, pattern = ".bam$", full.names = TRUE), yieldSize=100000)
       print(bamfiles)
-      counts <- generateCountMatrix(bamfiles, windows, remove = c("chrM","chrX","chrY"))
+      counts <- generateCountMatrix(bamfiles, windows)
     }
     else if(file_test("-f", input)){
       print("Obtaining the fragments tsv file")
@@ -57,7 +57,7 @@ atacCNV <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapi
       fragments <- as_granges(file_fragments)
       print(head(fragments))
       print(names(fragments))
-      counts <- generateCountMatrix(fragments, windows, remove = c("chrM","chrX","chrY"))
+      counts <- generateCountMatrix(fragments, windows)
     }
     saveRDS(counts, file.path(outdir,"count_summary.rds"))
   }

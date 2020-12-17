@@ -1,6 +1,6 @@
 #' @export
 
-makeWindows <- function(genome, blacklist, windowSize, slidingSize = 2e6, exclude = c("chrM","chrX","chrY")){
+makeWindows <- function(genome, blacklist, windowSize, slidingSize = 2e6, include = NULL){
   #chromSizes <- GRanges(names(seqlengths(genome)), IRanges(1, seqlengths(genome)))
   #chromSizes <- GenomeInfoDb::keepStandardChromosomes(chromSizes, pruning.mode = "coarse")
   #windows <- slidingWindows(x = chromSizes, width = windowSize, step = slidingSize) %>% unlist %>% .[which(width(.)==windowSize),]
@@ -8,7 +8,7 @@ makeWindows <- function(genome, blacklist, windowSize, slidingSize = 2e6, exclud
   windows <- tileGenome(seqlengths = seqlengths(genome), tilewidth = windowSize, cut.last.tile.in.chrom = TRUE)
   windows <- GenomeInfoDb::keepStandardChromosomes(windows, pruning.mode = "coarse")
   # windows <- windows[seqnames(windows) %ni% exclude]
-  windows <- dropSeqlevels(windows, exclude, pruning.mode = 'coarse')
+  windows <- keepSeqlevels(windows, include, pruning.mode = 'coarse')
   mcols(windows)$wSeq <- as.character(seqnames(windows))
   mcols(windows)$wStart <- BiocGenerics::start(windows)
   mcols(windows)$wEnd <- BiocGenerics::end(windows)
@@ -40,14 +40,15 @@ makeWindows <- function(genome, blacklist, windowSize, slidingSize = 2e6, exclud
     aFreq <- Biostrings::alphabetFrequency(Biostrings::Views(chrSeq, ranges(grx)))
     mcols(grx)$GC <- rowSums(aFreq[, c("G","C")]) / rowSums(aFreq)
     mcols(grx)$AT <- rowSums(aFreq[, c("A","T")]) / rowSums(aFreq)
-    tn5motif1 <- Biostrings::DNAString("GSSCTGGGS")
-    tn5motif2 <- Biostrings::reverseComplement(tn5motif1)
-    tn5bias1 <- Biostrings::vcountPattern(tn5motif1, Biostrings::Views(chrSeq, ranges(grx)), fixed=FALSE)
-    tn5bias2 <- Biostrings::vcountPattern(tn5motif2, Biostrings::Views(chrSeq, ranges(grx)), fixed=FALSE)
-    mcols(grx)$tn5bias <- tn5bias1 + tn5bias2
-    # grx$tn5bias[which(grx$tn5bias > quantile(grx$tn5bias, 0.90))] <- 0
+    # tn5motif1 <- Biostrings::DNAString("GSSCTGGGS")
+    # tn5motif2 <- Biostrings::reverseComplement(tn5motif1)
+    # tn5bias1 <- Biostrings::vcountPattern(tn5motif1, Biostrings::Views(chrSeq, ranges(grx)), fixed=FALSE)
+    # tn5bias2 <- Biostrings::vcountPattern(tn5motif2, Biostrings::Views(chrSeq, ranges(grx)), fixed=FALSE)
+    # mcols(grx)$tn5bias <- tn5bias1 + tn5bias2
+    # # grx$tn5bias[which(grx$tn5bias > quantile(grx$tn5bias, 0.90))] <- 0
     return(grx)
   }) %>% GRangesList %>% unlist %>% sortSeqlevels %>% sort
   windowNuc$N <- 1 - (windowNuc$GC + windowNuc$AT)
+  print("Finished making windows successfully")
   windowNuc
 }
