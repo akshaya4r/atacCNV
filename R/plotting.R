@@ -8,7 +8,9 @@ plot_karyo <- function(somies_ad, outdir, peaks){
     qc.sos(counts,somies)
   }, peaks[, .SD, .SDcols = patterns("cell-")], somies_ad))
   qc_dt$libsize <- sapply(peaks[, .SD, .SDcols = patterns("cell-")], sum)
+  print(dim(qc_dt))
   somies.dt <- as.data.table(somies_ad)
+  print(dim(somies.dt))
   # somies.dt <- as.data.table(lapply(somies.dt, function(x) {scale(x, center=TRUE, scale=TRUE)}))
   qc_dt$name <- colnames(somies.dt)
   somies.dt$seqnames <- peaks$seqnames
