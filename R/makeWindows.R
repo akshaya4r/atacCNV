@@ -1,6 +1,6 @@
 #' @export
 
-makeWindows <- function(genome, blacklist, windowSize, slidingSize = 2e6, include = NULL){
+makeWindows <- function(genome, blacklist, windowSize, slidingSize = 2e6, exclude = NULL){
   #chromSizes <- GRanges(names(seqlengths(genome)), IRanges(1, seqlengths(genome)))
   #chromSizes <- GenomeInfoDb::keepStandardChromosomes(chromSizes, pruning.mode = "coarse")
   #windows <- slidingWindows(x = chromSizes, width = windowSize, step = slidingSize) %>% unlist %>% .[which(width(.)==windowSize),]
@@ -8,7 +8,7 @@ makeWindows <- function(genome, blacklist, windowSize, slidingSize = 2e6, includ
   windows <- tileGenome(seqlengths = seqlengths(genome), tilewidth = windowSize, cut.last.tile.in.chrom = TRUE)
   windows <- GenomeInfoDb::keepStandardChromosomes(windows, pruning.mode = "coarse")
   # windows <- windows[seqnames(windows) %ni% exclude]
-  windows <- keepSeqlevels(windows, include, pruning.mode = 'coarse')
+  windows <- dropSeqlevels(windows, exclude, pruning.mode = 'coarse')
   mcols(windows)$wSeq <- as.character(seqnames(windows))
   mcols(windows)$wStart <- BiocGenerics::start(windows)
   mcols(windows)$wEnd <- BiocGenerics::end(windows)
