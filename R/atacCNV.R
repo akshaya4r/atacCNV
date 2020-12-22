@@ -106,12 +106,14 @@ atacCNV <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapi
   }
   print("Successfully identified breakpoints")
 
+  names_seq <- levels(peaks$seqnames)
+
   clusters_ad <- readRDS(file.path(outdir,"results_gc_corrected.rds"))
   breakpoints <- lapply(clusters_ad, function(x) { lapply(x,'[[', 1) })
   distances <- lapply(clusters_ad, function(x) { lapply(x,'[[', 2) })
   result.dt <- Map(function(bp, dist){
-    names(bp) <- paste0('chr',1:22)
-    names(dist) <- paste0('chr',1:22)
+    names(bp) <- names_seq
+    names(dist) <- names_seq
     dtlist <- Map(function(per_chr_bp, per_chr_dist){
       data.table(per_chr_bp, per_chr_dist)
     }, bp, dist)
@@ -135,7 +137,7 @@ atacCNV <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapi
         bp_to_cluster <- sort(c(1,length(seq_data2)+1,bp2$per_chr_bp))
         return(rep(1:length(diff(bp_to_cluster)),diff(bp_to_cluster)))
       }
-    }, per_chrom_seq_data[paste0('chr',1:22)], per_chrom_bp[paste0('chr',1:22)])
+    }, per_chrom_seq_data[names_seq], per_chrom_bp[names_seq])
     cl <- 0
     clusters <- vector()
     for(item in clusters_per_chrom){
