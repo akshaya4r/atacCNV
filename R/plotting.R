@@ -39,12 +39,15 @@ plot_karyo <- function(somies_ad, outdir, peaks){
     theme(axis.ticks.x = element_blank(),
           axis.text.x = element_blank(),
           legend.position = 'none',
-          axis.title.y = element_blank())
-  # axis.text.y = element_blank())
+          axis.title.y = element_blank(),
+          axis.text.y = element_blank())
 
-  outkaryo <- file.path(outdir, "karyogram.pdf")
-  pdf(outkaryo, width=35, height=15)
-  # print(cowplot::plot_grid(plotlist = list(ggdndr, ggsomy), align = 'h', rel_widths=c(0.2,1)))
-  print(ggsomy)
-  dev.off()
+  outkaryo <- file.path(outdir, "karyogram.png")
+
+  ggsave(outkaryo, ggsomy, width = 35, height=20, units = "in")
+
+  # pdf(outkaryo, width=35, height=15)
+  # # print(cowplot::plot_grid(plotlist = list(ggdndr, ggsomy), align = 'h', rel_widths=c(0.2,1)))
+  # print(ggsomy)
+  # dev.off()
 }
