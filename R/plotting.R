@@ -44,6 +44,7 @@ plot_karyo <- function(somies_ad, outdir, peaks){
 
   outkaryo <- file.path(outdir, "karyogram.pdf")
   pdf(outkaryo, width=35, height=15)
-  print(cowplot::plot_grid(plotlist = list(ggdndr, ggsomy), align = 'h', rel_widths=c(0.2,1)))
+  # print(cowplot::plot_grid(plotlist = list(ggdndr, ggsomy), align = 'h', rel_widths=c(0.2,1)))
+  print(ggsomy)
   dev.off()
 }
