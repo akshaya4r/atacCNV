@@ -43,7 +43,8 @@ plot_karyo <- function(somies_ad, outdir, peaks, uq=NULL, lq=NULL, somyl=NULL, s
           axis.title.y = element_blank(),
           axis.text.y = element_blank())
 
-  outkaryo <- file.path(outdir, "karyogram.png")
+  karyoname <- paste0("Karyogram_Segmentlq_", lq, "_Segmentuq_", uq, "_Gridlq_", somyl, "_Griduq_", somyu,".png")
+  outkaryo <- file.path(outdir, karyoname)
 
   ggsave(outkaryo, ggsomy, width = 35, height=20, units = "in")
 
