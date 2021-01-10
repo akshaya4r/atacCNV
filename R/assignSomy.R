@@ -29,7 +29,7 @@ threshold_dist_values <- function(result.dt) {
 #   return(CN.states)
 # }
 
-assign_somy <- function(seq_data, cluster, CNgrid.start=1.5){
+assign_somy <- function(seq_data, cluster, CNgrid.start=1.5, uq=0.8, lq=0.5, somyl=0.2, somyu=0.8){
   counts.normal <- seq_data
   qus_global <- quantile(seq_data, c(0.01, 0.98))
   # counts.normal <- seq_data[seq_data >= qus[1] & seq_data <= qus[2]]
@@ -47,7 +47,7 @@ assign_somy <- function(seq_data, cluster, CNgrid.start=1.5){
   # raw_cnmean[raw_cnmean>quantile(raw_cnmean, 0.80) | raw_cnmean<quantile(raw_cnmean, 0.20)] <- NA
   # cnmean[cnmean>quantile(cnmean, 0.80)] <- quantile(cnmean, 0.80)
   # cnmean[cnmean>quantile(cnmean, 0.75) | cnmean<quantile(cnmean, 0.25)] <- mean(cnmean)
-  cnmean[cnmean>quantile(cnmean, 0.75) | cnmean<quantile(cnmean, 0.25)] <- NA
+  cnmean[cnmean>quantile(cnmean, somyu) | cnmean<quantile(cnmean, somyl)] <- NA
   # cnmean <- cnmean / min(cnmean[cnmean>0])
   # cnmean <- runmed(cnmean, k=3)
   # cooksd <- cooks.distance(lm(cnmean~1))

@@ -1,6 +1,6 @@
 #' @export
 
-plot_karyo <- function(somies_ad, outdir, peaks){
+plot_karyo <- function(somies_ad, outdir, peaks, uq=NULL, lq=NULL, somyl=NULL, somyu=NULL, title_karyo=NULL){
   qc_dt <- data.table()
   qc_dt$spikiness <- sapply(peaks[, .SD, .SDcols = patterns("cell-")], qc.spikiness)
   qc_dt$entropy <- sapply(peaks[, .SD, .SDcols = patterns("cell-")], qc.entropy)
@@ -29,11 +29,12 @@ plot_karyo <- function(somies_ad, outdir, peaks){
   ggdndr <- ggdndr + theme(panel.background=element_blank(), axis.ticks=element_blank(), axis.text=element_blank(), axis.line=element_blank(), axis.title=element_blank())
   somies_melted$variable <- factor(somies_melted$variable,
                                    levels = names(somies_ad)[ord])
+  text_subtitle <- paste0("Segment lq: ", lq, "Segment uq: ", uq, "Grid lq: ", somyl, "Grid uq: ", somyu)
   ggsomy <- ggplot(somies_melted, aes(x=rn, y=variable, fill=value)) + geom_tile() +
   # ggsomy <- ggplot(somies_melted, aes(x=rn, y=variable, fill=value)) + geom_raster() +
     facet_grid(cols=vars(seqnames), scales = 'free_x', space = 'free') +
     # labs(x="Position in chromosome", y="Cells", fill='Somy') +
-    labs(x="Position in chromosome", fill='Somy') +
+    labs(x="Position in chromosome", fill='Somy', title = title_karyo, subtitle = text_subtitle) +
     scale_fill_manual(values=EpiAneufinder::stateColors(states = unique(somies_melted$value))) +
     # scale_fill_gradient2() +
     theme(axis.ticks.x = element_blank(),

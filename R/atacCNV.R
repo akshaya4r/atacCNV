@@ -35,7 +35,8 @@
 # S4Vectors (>= 0.24.2)
 
 atacCNV <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapiens.UCSC.hg38",
-                    test='AD', reuse.existing=FALSE, get_sig=TRUE, exclude=NULL){
+                    test='AD', reuse.existing=FALSE, get_sig=TRUE, exclude=NULL,
+                    uq=0.8, lq=0.5, somyl=0.2, somyu=0.8, title_karyo=NULL){
 
   if(reuse.existing==FALSE){
     print("Removing old file from the output folder")
@@ -149,10 +150,13 @@ atacCNV <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapi
   },  peaks[, .SD, .SDcols = patterns("cell-")], pruned_result.dt))
 
   somies_ad <- Map(function(seq_data,cluster) {
-    assign_somy(seq_data, cluster)
+    assign_somy(seq_data, cluster, uq, lq, somyl, somyu)
   }, peaks[, .SD, .SDcols = patterns("cell-")], clusters_pruned)
   print("Successfully assigned somies")
 
-  plot_karyo(somies_ad = somies_ad, outdir = outdir, peaks = peaks)
+  if(is.null(title_karyo)){
+    title_karyo <- basename(outdir)
+  }
+  plot_karyo(somies_ad = somies_ad, outdir = outdir, peaks = peaks, uq, lq, somyl, somyu, title_karyo)
   print("Successfully plotted karyogram")
 }
