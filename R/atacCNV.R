@@ -150,7 +150,7 @@ atacCNV <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapi
   },  peaks[, .SD, .SDcols = patterns("cell-")], pruned_result.dt))
 
   somies_ad <- Map(function(seq_data,cluster) {
-    assign_somy(seq_data, cluster, uq, lq, somyl, somyu)
+    assign_somy(seq_data, cluster, uq=uq, lq=lq, somyl=somyl, somyu=somyu)
   }, peaks[, .SD, .SDcols = patterns("cell-")], clusters_pruned)
   print("Successfully assigned somies")
 
