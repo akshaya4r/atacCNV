@@ -68,3 +68,23 @@ assign_somy <- function(seq_data, cluster, CNgrid.start=1.5, uq=0.8, lq=0.5, som
   return(CN.states)
 }
 
+assign_gainloss <- function(seq_data, cluster, CNgrid.start=1.5, uq=0.8, lq=0.1) {
+  counts.normal <- seq_data
+  qus_global <- quantile(seq_data, c(0.01, 0.98))
+  # counts.normal <- seq_data[seq_data >= qus[1] & seq_data <= qus[2]]
+  # cluster_quantile <- cluster[seq_data >= qus[1] & seq_data <= qus[2]]
+  cnmean <- sapply(split(counts.normal,cluster), function(x) {
+    qus <- quantile(x, c(lq, uq))
+    # qus <- quantile(x, c(0.50, 0.99))
+    y <- x[x >= qus[1] & x <= qus[2] & x >= qus_global[1] & x <= qus_global[2]]
+    # y <- y[which(y > quantile(y, 0.70))]
+    if(sum(y) == 0 | length(y) == 0)
+      y <- x
+    mean(y)
+  })
+  raw_cnmean <- cnmean / mean(cnmean)
+  CN.states <- round(raw_cnmean[as.character(cluster)])
+  # CN.states <- raw_cnmean[as.character(cluster)]
+  return(CN.states)
+}
+
