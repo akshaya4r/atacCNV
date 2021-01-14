@@ -159,6 +159,6 @@ atacCNV <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapi
     title_karyo <- basename(outdir)
   }
   # plot_karyo(somies_ad = somies_ad, outdir = outdir, peaks = peaks, uq, lq, somyl, somyu, title_karyo)
-  plot_karyo_gainloss(somies_ad = somies_ad, outdir = outdir, peaks = peaks, uq, lq, somyl, somyu, title_karyo)
+  plot_karyo_gainloss(somies_ad = somies_ad, outdir = outdir, peaks = peaks, uq, lq, title_karyo)
   print("Successfully plotted karyogram")
 }
