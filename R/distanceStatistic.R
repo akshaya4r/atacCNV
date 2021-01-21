@@ -24,16 +24,19 @@ dist_ad <- function(x, y, test='AD'){
     stat_ad <- (sum_x/n) + (sum_y/m)
     return(stat_ad)
   }
-  if(test=='KS'){
+  else if(test=='KS'){
     return(stats::ks.test(x,y)$statistic)
   }
-  # if(test=='Bhattacharya'){
-  #   mux <- mean(x)
-  #   muy <- mean(y)
-  #   covx <- cov(as.matrix(x))
-  #   covy <- cov(as.matrix(y))
-  #   return(fpc::bhattacharyya.dist(mux, muy, covx, covy))
-  # }
+  else if(test=='Bhattacharya'){
+    mux <- mean(x)
+    muy <- mean(y)
+    covx <- cov(as.matrix(x))
+    covy <- cov(as.matrix(y))
+    return(fpc::bhattacharyya.dist(mux, muy, covx, covy))
+  }
+  else {
+    stop("Please choose one of 'AD', 'KS' or 'Bhattacharya' tests")
+  }
 }
 
 

@@ -54,12 +54,19 @@ atacCNV <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapi
       counts <- generateCountMatrix(bamfiles, windows)
     }
     else if(file_test("-f", input)){
-      print("Obtaining the fragments tsv file")
-      file_fragments <- fread(input)
-      colnames(file_fragments) <- c('seqnames','start','end','barcode','pcr')
-      fragments <- as_granges(file_fragments)
-      print(head(fragments))
-      print(names(fragments))
+      if(grepl("\\.tsv$", input)){
+        print("Obtaining the fragments tsv file")
+        file_fragments <- fread(input)
+        colnames(file_fragments) <- c('seqnames','start','end','barcode','pcr')
+        fragments <- as_granges(file_fragments)
+        print(head(fragments))
+        print(names(fragments))
+      } else if(grepl("\\.bed$", input)){
+        print("Obtaining the fragments bed file")
+        fragments <- read_bed(input)
+      } else{
+        stop("Please provide a fragments .tsv/.bed or a path to the directory containing all the bam files")
+      }
       counts <- generateCountMatrix(fragments, windows)
     }
     saveRDS(counts, file.path(outdir,"count_summary.rds"))
