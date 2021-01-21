@@ -74,7 +74,7 @@ atacCNV <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapi
   if(!file.exists(file.path(outdir,"counts_gc_corrected.rds"))) {
     corrected_counts <- peaks[, lapply(.SD, function(x) {
       fit <- stats::loess(x ~ peaks$GC)
-      correction <- median(x) / fit$fitted
+      correction <- mean(x) / fit$fitted
       as.integer(round(x * correction))
     }), .SDcols = patterns("cell-")]
     saveRDS(corrected_counts, file.path(outdir,"counts_gc_corrected.rds"))
@@ -151,7 +151,7 @@ atacCNV <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapi
 
   somies_ad <- Map(function(seq_data,cluster) {
     # assign_somy(seq_data, cluster, uq=uq, lq=lq, somyl=somyl, somyu=somyu)
-    assign_gainloss(seq_data, cluster, 1.5, uq, lq)
+    assign_gainloss(seq_data, cluster, CN=2, uq=uq, lq=lq)
   }, peaks[, .SD, .SDcols = patterns("cell-")], clusters_pruned)
   print("Successfully assigned somies")
 
