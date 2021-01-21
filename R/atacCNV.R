@@ -64,6 +64,7 @@ atacCNV <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapi
       } else if(grepl("\\.bed$", input)){
         print("Obtaining the fragments bed file")
         fragments <- read_bed(input)
+        names(mcols(fragments)) <- 'barcode'
       } else{
         stop("Please provide a fragments .tsv/.bed or a path to the directory containing all the bam files")
       }
