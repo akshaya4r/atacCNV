@@ -68,7 +68,7 @@ assign_somy <- function(seq_data, cluster, CNgrid.start=1.5, uq=0.8, lq=0.5, som
   return(CN.states)
 }
 
-assign_gainloss <- function(seq_data, cluster, CN=2, uq=0.8, lq=0.1) {
+assign_gainloss <- function(seq_data, cluster, CN=2, uq=0.8, lq=0.1, pval=0.05) {
   counts.normal <- seq_data / mean(seq_data) * CN
   qus_global <- quantile(seq_data, c(0.01, 0.98))
   # counts.normal <- seq_data[seq_data >= qus[1] & seq_data <= qus[2]]
