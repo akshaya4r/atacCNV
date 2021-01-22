@@ -35,7 +35,7 @@
 # S4Vectors (>= 0.24.2)
 
 atacCNV <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapiens.UCSC.hg38",
-                    test='AD', reuse.existing=FALSE, get_sig=TRUE, exclude=NULL,
+                    test='AD', reuse.existing=FALSE, exclude=NULL,
                     uq=0.8, lq=0.5, somyl=0.2, somyu=0.8, title_karyo=NULL, minFrags = 5000){
 
   if(reuse.existing==FALSE){
