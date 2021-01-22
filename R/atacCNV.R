@@ -68,7 +68,7 @@ atacCNV <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapi
       } else{
         stop("Please provide a fragments .tsv/.bed or a path to the directory containing all the bam files")
       }
-      counts <- generateCountMatrix(fragments, windows)
+      counts <- generateCountMatrix(fragments, windows, minFrags=minFrags)
     }
     saveRDS(counts, file.path(outdir,"count_summary.rds"))
   }
