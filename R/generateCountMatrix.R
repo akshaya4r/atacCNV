@@ -2,12 +2,13 @@
 
 generateCountMatrix <- function(reads, windows, ...){
 
+  arguments <- list(...)
   #Keep only regions in filtered chromosomes
   windows   <- GenomeInfoDb::keepStandardChromosomes(windows, pruning.mode = "coarse")
 
   #Count Insertions in windows
   message("Getting Counts...")
-  counts <- countInsertions(reads, windows, ...)
+  counts <- countInsertions(reads, windows, arguments)
 
   #Keep only regions with less than 0.1% N
   keep <- which(windows$N < 0.001)
