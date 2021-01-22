@@ -1,14 +1,13 @@
 #' @export
 
-generateCountMatrix <- function(reads, windows, ...){
+generateCountMatrix <- function(reads, windows, minFrags=NULL){
 
-  arguments <- list(...)
   #Keep only regions in filtered chromosomes
   windows   <- GenomeInfoDb::keepStandardChromosomes(windows, pruning.mode = "coarse")
 
   #Count Insertions in windows
   message("Getting Counts...")
-  counts <- countInsertions(reads, windows, arguments)
+  counts <- countInsertions(reads, windows, minFrags)
 
   #Keep only regions with less than 0.1% N
   keep <- which(windows$N < 0.001)

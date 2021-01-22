@@ -1,6 +1,6 @@
 #' @export
 
-countInsertions <- function(reads, windows, ...) {
+countInsertions <- function(reads, windows, minFrags=NULL) {
   UseMethod("countInsertions")
 }
 
