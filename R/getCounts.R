@@ -4,7 +4,7 @@ countInsertions <- function(reads, windows, minFrags=NULL) {
   UseMethod("countInsertions")
 }
 
-countInsertions.BamFileList <- function(reads, windows){
+countInsertions.BamFileList <- function(reads, windows, minFrags=NULL){
   # seqlevelsStyle(windows) <- 'NCBI'
   message("Counting reads from bam files .. ")
   counts_bam <- GenomicAlignments::summarizeOverlaps(windows, reads, singleEnd=TRUE, fragments=FALSE, mode='Union', param = Rsamtools::ScanBamParam(mapqFilter=10), ignore.strand = TRUE)
