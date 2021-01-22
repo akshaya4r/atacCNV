@@ -82,6 +82,7 @@ assign_gainloss <- function(seq_data, cluster, CN=2, uq=0.8, lq=0.1, pval=0.05) 
       y <- x
     mean(y)
   })
+  pval <- pval
   cnmean_significance <- sapply(cnmean, function(x){
     t <- t.test(cnmean, mu=x)
     return(t$p.value > pval)
