@@ -7,7 +7,7 @@ generateCountMatrix <- function(reads, windows){
 
   #Count Insertions in windows
   message("Getting Counts...")
-  counts <- countInsertions(reads, windows)
+  counts <- countInsertions(reads, windows, minFrags = 5000)
 
   #Keep only regions with less than 0.1% N
   keep <- which(windows$N < 0.001)

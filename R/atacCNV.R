@@ -36,7 +36,7 @@
 
 atacCNV <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapiens.UCSC.hg38",
                     test='AD', reuse.existing=FALSE, get_sig=TRUE, exclude=NULL,
-                    uq=0.8, lq=0.5, somyl=0.2, somyu=0.8, title_karyo=NULL){
+                    uq=0.8, lq=0.5, somyl=0.2, somyu=0.8, title_karyo=NULL, minFrags = 5000){
 
   if(reuse.existing==FALSE){
     print("Removing old file from the output folder")
@@ -51,7 +51,7 @@ atacCNV <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapi
       print("Obtaining bam file list")
       bamfiles <- Rsamtools::BamFileList(list.files(input, pattern = ".bam$", full.names = TRUE), yieldSize=100000)
       print(bamfiles)
-      counts <- generateCountMatrix(bamfiles, windows)
+      counts <- generateCountMatrix(bamfiles, windows, minFrags = minFrags)
     }
     else if(file_test("-f", input)){
       if(grepl("\\.tsv$", input)){
@@ -159,7 +159,7 @@ atacCNV <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapi
 
   somies_ad <- Map(function(seq_data,cluster) {
     # assign_somy(seq_data, cluster, uq=uq, lq=lq, somyl=somyl, somyu=somyu)
-    assign_gainloss(seq_data, cluster, CN=2, uq=uq, lq=lq)
+    assign_gainloss(seq_data, cluster, CN=2, uq=uq, lq=lq, pval=0.05)
   }, peaks[, .SD, .SDcols = patterns("cell-")], clusters_pruned)
   print("Successfully assigned somies")
 
