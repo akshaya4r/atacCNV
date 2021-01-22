@@ -99,7 +99,7 @@ atacCNV <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapi
       print("Calculating distance AD")
       results <- lapply(peaksperchrom, function(x2) {
         # x2 <- runmed(x2, k=11, endrule = 'median')
-        getbp(x2, k = k, minsize = minsize, test=test, pcutoff=0.000001, get_sig=get_sig)
+        getbp(x2, k = k, minsize = minsize, test=test)
       })
       # clusterperchrom <- lapply(results, '[[', 3)
       # cl <- 0
