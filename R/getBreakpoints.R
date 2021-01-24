@@ -28,8 +28,8 @@ getbp <- function(seq_data, minsize=5, k=3, test='AD'){
     }
   }
   bp_ends <- c(1:5, seq(length(seq_data)-5, length(seq_data)))
-  bp <- bp[!(bp %in% bp_ends)]
   distbp <- distbp[!(bp %in% bp_ends)]
+  bp <- bp[!(bp %in% bp_ends)]
   res.df <- data.frame(bp, distbp)
   res.df <- res.df[order(-res.df$distbp),]
   res <- list()
