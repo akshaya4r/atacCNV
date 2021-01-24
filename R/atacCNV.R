@@ -36,7 +36,7 @@
 
 atacCNV <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapiens.UCSC.hg38",
                     test='AD', reuse.existing=FALSE, exclude=NULL,
-                    uq=0.8, lq=0.5, somyl=0.2, somyu=0.8, title_karyo=NULL, minFrags = 5000){
+                    uq=0.8, lq=0.5, somyl=0.2, somyu=0.8, title_karyo=NULL, minFrags = 20000){
 
   if(reuse.existing==FALSE){
     print("Removing old file from the output folder")
@@ -51,7 +51,7 @@ atacCNV <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapi
       print("Obtaining bam file list")
       bamfiles <- Rsamtools::BamFileList(list.files(input, pattern = ".bam$", full.names = TRUE), yieldSize=100000)
       print(bamfiles)
-      counts <- generateCountMatrix(bamfiles, windows, barcode="barcode", minFrags = minFrags)
+      counts <- generateCountMatrix(bamfiles, windows, by="barcode", minFrags = minFrags)
     }
     else if(file_test("-f", input)){
       if(grepl("\\.tsv$", input)){

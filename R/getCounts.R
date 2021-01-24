@@ -1,6 +1,6 @@
 #' @export
 
-countInsertions <- function(reads, windows, minFrags=NULL) {
+countInsertions <- function(reads, windows, by=NULL, minFrags=NULL) {
   UseMethod("countInsertions")
 }
 
@@ -15,7 +15,7 @@ countInsertions.BamFileList <- function(reads, windows, minFrags=NULL){
   return(sparseM)
 }
 
-countInsertions.GRanges <- function(reads, windows, by = "barcode", minFrags = 5000){
+countInsertions.GRanges <- function(reads, windows, by = "barcode", minFrags = 20000){
   message("Counting reads from fragments/bed file .. ")
   print(minFrags)
   tabRG <- table(mcols(reads)[[by]])
