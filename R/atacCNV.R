@@ -51,7 +51,7 @@ atacCNV <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapi
       print("Obtaining bam file list")
       bamfiles <- Rsamtools::BamFileList(list.files(input, pattern = ".bam$", full.names = TRUE), yieldSize=100000)
       print(bamfiles)
-      counts <- generateCountMatrix(bamfiles, windows, by="barcode", minFrags = minFrags)
+      counts <- generateCountMatrix(bamfiles, windows)
     }
     else if(file_test("-f", input)){
       if(grepl("\\.tsv$", input)){
@@ -68,7 +68,7 @@ atacCNV <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapi
       } else{
         stop("Please provide a fragments .tsv/.bed or a path to the directory containing all the bam files")
       }
-      counts <- generateCountMatrix(fragments, windows, minFrags=minFrags)
+      counts <- generateCountMatrix(fragments, windows, by="barcode", minFrags = minFrags)
     }
     saveRDS(counts, file.path(outdir,"count_summary.rds"))
   }
