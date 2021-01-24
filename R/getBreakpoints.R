@@ -9,7 +9,7 @@ getbp <- function(seq_data, minsize=5, k=3, test='AD'){
     if(length(bp)==0){
       add_to_bp <- 0
     } else{
-      add_to_bp <- c(0, sapply(seq_k_data[-length(seq_k_data)], length))
+      add_to_bp <- c(0, cumsum(sapply(seq_k_data[-length(seq_k_data)], length)))
     }
     bp_per_seq <- sapply(dist_vect, function(x) { which.max(x)*minsize })
     bp_per_seq[which(bp_per_seq > sapply(seq_k_data, length))] <- sapply(seq_k_data, length)[which(bp_per_seq > sapply(seq_k_data, length))]
