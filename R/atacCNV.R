@@ -51,7 +51,7 @@ atacCNV <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapi
       print("Obtaining bam file list")
       bamfiles <- Rsamtools::BamFileList(list.files(input, pattern = ".bam$", full.names = TRUE), yieldSize=100000)
       print(bamfiles)
-      counts <- generateCountMatrix(bamfiles, windows, minFrags = minFrags)
+      counts <- generateCountMatrix(bamfiles, windows, barcode="barcode", minFrags = minFrags)
     }
     else if(file_test("-f", input)){
       if(grepl("\\.tsv$", input)){
