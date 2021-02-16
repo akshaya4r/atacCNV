@@ -35,7 +35,7 @@
 # S4Vectors (>= 0.24.2)
 
 atacCNV <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapiens.UCSC.hg38",
-                    test='AD', reuse.existing=FALSE, exclude=NULL,
+                    test='AD', reuse.existing=FALSE, exclude=NULL, readout="ATAC",
                     uq=0.8, lq=0.5, somyl=0.2, somyu=0.8, title_karyo=NULL, minFrags = 20000){
 
   if(reuse.existing==FALSE){
@@ -157,16 +157,26 @@ atacCNV <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapi
     return(clusters)
   },  peaks[, .SD, .SDcols = patterns("cell-")], pruned_result.dt))
 
-  somies_ad <- Map(function(seq_data,cluster) {
-    # assign_somy(seq_data, cluster, uq=uq, lq=lq, somyl=somyl, somyu=somyu)
-    assign_gainloss(seq_data, cluster, uq=uq, lq=lq)
-  }, peaks[, .SD, .SDcols = patterns("cell-")], clusters_pruned)
-  print("Successfully assigned somies")
-
-  if(is.null(title_karyo)){
-    title_karyo <- basename(outdir)
+  if(readout=="ATAC"){
+    somies_ad <- Map(function(seq_data,cluster) {
+      assign_gainloss(seq_data, cluster, uq=uq, lq=lq)
+    }, peaks[, .SD, .SDcols = patterns("cell-")], clusters_pruned)
+    print("Successfully assigned gain-loss")
+    if(is.null(title_karyo)){
+      title_karyo <- basename(outdir)
+    }
+    plot_karyo_gainloss(somies_ad = somies_ad, outdir = outdir, peaks = peaks, uq, lq, title_karyo)
+    print("Successfully plotted karyogram")
   }
-  # plot_karyo(somies_ad = somies_ad, outdir = outdir, peaks = peaks, uq, lq, somyl, somyu, title_karyo)
-  plot_karyo_gainloss(somies_ad = somies_ad, outdir = outdir, peaks = peaks, uq, lq, title_karyo)
-  print("Successfully plotted karyogram")
+  if(readout=="BS"){
+    somies_ad <- Map(function(seq_data,cluster) {
+      assign_somy(seq_data, cluster, uq=uq, lq=lq, somyl=somyl, somyu=somyu)
+    }, peaks[, .SD, .SDcols = patterns("cell-")], clusters_pruned)
+    print("Successfully assigned gain-loss")
+    if(is.null(title_karyo)){
+      title_karyo <- basename(outdir)
+    }
+    plot_karyo(somies_ad = somies_ad, outdir = outdir, peaks = peaks, uq, lq, somyl, somyu, title_karyo)
+    print("Successfully plotted karyogram")
+  }
 }
