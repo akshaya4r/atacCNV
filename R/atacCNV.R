@@ -159,7 +159,7 @@ atacCNV <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapi
 
   somies_ad <- Map(function(seq_data,cluster) {
     # assign_somy(seq_data, cluster, uq=uq, lq=lq, somyl=somyl, somyu=somyu)
-    assign_gainloss(seq_data, cluster, CN=2, uq=uq, lq=lq, pval=0.05)
+    assign_gainloss(seq_data, cluster, uq=uq, lq=lq)
   }, peaks[, .SD, .SDcols = patterns("cell-")], clusters_pruned)
   print("Successfully assigned somies")
 

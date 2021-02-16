@@ -70,7 +70,7 @@ plot_karyo_gainloss <- function(somies_ad, outdir, peaks, uq=NULL, lq=NULL, titl
   somies.dt$seqnames <- peaks$seqnames
   somies.dt$rn <- as.numeric(rownames(somies.dt))
   somies_melted <- melt(somies.dt, id.vars=c('rn','seqnames'))
-  # somies_melted$value <- as.factor(paste0(somies_melted$value,'-somy'))
+  somies_melted$value <- as.factor(paste0(somies_melted$value,'-somy'))
   counts_t <- t(somies.dt[ ,.SD, .SDcols=patterns('cell-')])
   dist_matrix <- dist(counts_t)
   dist_matrix[is.na(dist_matrix)] <- 0
@@ -83,13 +83,17 @@ plot_karyo_gainloss <- function(somies_ad, outdir, peaks, uq=NULL, lq=NULL, titl
   ggdndr <- ggdndr + theme(panel.background=element_blank(), axis.ticks=element_blank(), axis.text=element_blank(), axis.line=element_blank(), axis.title=element_blank())
   somies_melted$variable <- factor(somies_melted$variable,
                                    levels = names(somies_ad)[ord])
+  somycolours <- c(`0-somy` = "darkorchid3",
+                   `1-somy` = "springgreen2",
+                   `2-somy` = "red3")
   text_subtitle <- paste0("Segment lq: ", lq, "Segment uq: ", uq)
   ggsomy <- ggplot(somies_melted, aes(x=rn, y=variable, fill=value)) + geom_tile() +
     # ggsomy <- ggplot(somies_melted, aes(x=rn, y=variable, fill=value)) + geom_raster() +
     facet_grid(cols=vars(seqnames), scales = 'free_x', space = 'free') +
     # labs(x="Position in chromosome", y="Cells", fill='Somy') +
     labs(x="Position in chromosome", fill='Somy', title = title_karyo, subtitle = text_subtitle) +
-    scale_fill_gradient2(high = 'red', low = 'yellow', mid = 'white', midpoint = 0.5) +
+    # scale_fill_gradient2(high = 'red', low = 'yellow', mid = 'white', midpoint = 0.5) +
+    scale_fill_manual(values=somycolours) +
     theme(axis.ticks.x = element_blank(),
           axis.text.x = element_blank(),
           legend.position = 'none',
@@ -99,5 +103,5 @@ plot_karyo_gainloss <- function(somies_ad, outdir, peaks, uq=NULL, lq=NULL, titl
   karyoname <- paste0("Karyogram_GainLoss_Segmentlq_", lq, "_Segmentuq_", uq, ".png")
   outkaryo <- file.path(outdir, karyoname)
 
-  ggsave(outkaryo, ggsomy, width = 35, height=20, units = "in")
+  ggsave(outkaryo, ggsomy, width = 25, height=20, units = "in")
 }
