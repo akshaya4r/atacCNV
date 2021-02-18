@@ -46,7 +46,7 @@ plot_karyo <- function(somies_ad, outdir, peaks, uq=NULL, lq=NULL, somyl=NULL, s
   karyoname <- paste0("Karyogram_Segmentlq_", lq, "_Segmentuq_", uq, "_Gridlq_", somyl, "_Griduq_", somyu,".png")
   outkaryo <- file.path(outdir, karyoname)
 
-  ggsave(outkaryo, ggsomy, width = 35, height=20, units = "in")
+  ggsave(outkaryo, ggsomy, width = 30, height=20, units = "in")
 
   # pdf(outkaryo, width=35, height=15)
   # # print(cowplot::plot_grid(plotlist = list(ggdndr, ggsomy), align = 'h', rel_widths=c(0.2,1)))
@@ -103,5 +103,5 @@ plot_karyo_gainloss <- function(somies_ad, outdir, peaks, uq=NULL, lq=NULL, titl
   karyoname <- paste0("Karyogram_GainLoss_Segmentlq_", lq, "_Segmentuq_", uq, ".png")
   outkaryo <- file.path(outdir, karyoname)
 
-  ggsave(outkaryo, ggsomy, width = 25, height=20, units = "in")
+  ggsave(outkaryo, ggsomy, width = 30, height=20, units = "in")
 }
