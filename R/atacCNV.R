@@ -37,7 +37,7 @@
 atacCNV <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapiens.UCSC.hg38",
                     test='AD', reuse.existing=FALSE, exclude=NULL, readout="ATAC",
                     uq=0.8, lq=0.5, somyl=0.2, somyu=0.8, title_karyo=NULL, minFrags = 20000,
-                    gene.annotation=NULL){
+                    gene.annotation=NULL, threshold_blacklist_bins=0.85){
 
   if(reuse.existing==FALSE){
     print("Removing old file from the output folder")
@@ -103,6 +103,10 @@ atacCNV <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapi
   }
 
   peaks <- cbind(rowinfo, corrected_counts)
+
+  zeroes_per_bin <- peaks[, rowSums(.SD==0), .SDcols = patterns("cell-")]
+  ncells <- length(grep("cell-", colnames(peaks)))
+  peaks <- peaks[zeroes_per_bin<(threshold_blacklist_bins*ncells)]
 
   if(!file.exists(file.path(outdir,"results_gc_corrected.rds"))) {
     clusters_ad <- peaks[, lapply(.SD, function(x) {
