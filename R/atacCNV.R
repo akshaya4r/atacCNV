@@ -36,7 +36,8 @@
 
 atacCNV <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapiens.UCSC.hg38",
                     test='AD', reuse.existing=FALSE, exclude=NULL, readout="ATAC",
-                    uq=0.8, lq=0.5, somyl=0.2, somyu=0.8, title_karyo=NULL, minFrags = 20000){
+                    uq=0.8, lq=0.5, somyl=0.2, somyu=0.8, title_karyo=NULL, minFrags = 20000,
+                    gene.annotation=NULL){
 
   if(reuse.existing==FALSE){
     print("Removing old file from the output folder")
@@ -89,6 +90,13 @@ atacCNV <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapi
   }
 
   corrected_counts <- readRDS(file.path(outdir,"counts_gc_corrected.rds"))
+
+  if(!is.null(gene.annotation)) {
+    rowinfo.gr <- rowRanges(counts)
+    rowinfo.gr <- addExpressionFactor(rowinfo.gr, gene.annotation)
+    corrected_counts <- corrected_counts/rowinfo.gr$numgenes
+  }
+
   peaks <- cbind(rowinfo, corrected_counts)
 
   if(!file.exists(file.path(outdir,"results_gc_corrected.rds"))) {
