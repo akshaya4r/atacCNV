@@ -94,7 +94,12 @@ atacCNV <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapi
   if(!is.null(gene.annotation)) {
     rowinfo.gr <- rowRanges(counts)
     rowinfo.gr <- addExpressionFactor(rowinfo.gr, gene.annotation)
-    corrected_counts <- corrected_counts/rowinfo.gr$numgenes
+    ## corrected_counts <- corrected_counts/rowinfo.gr$numgenes
+    corrected_counts <- corrected_counts[, lapply(.SD, function(x) {
+      fit <- stats::loess(x ~ rowinfo.gr$numgenes)
+      correction <- mean(x) / fit$fitted
+      as.integer(round(x * correction))
+    })]
   }
 
   peaks <- cbind(rowinfo, corrected_counts)
