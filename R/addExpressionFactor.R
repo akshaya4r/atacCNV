@@ -6,12 +6,24 @@ addExpressionFactor <- function(bins, gene.annotation=NULL) {
 }
 
 # Looking at genes
+# addExpressionFactor.GRanges <- function(bins, gene.annotation=NULL) {
+#   txdb <- getFromNamespace(gene.annotation, ns=gene.annotation)
+#   seqlevelsStyle(txdb) <- seqlevelsStyle(bins)[1]
+#   genes <- sort(keepStandardChromosomes(genes(txdb), pruning.mode = 'coarse'))
+#   bins$numgenes <- countOverlaps(bins,genes)
+#   bins$numgenes <- bins$numgenes + 1
+#   bins
+# }
 addExpressionFactor.GRanges <- function(bins, gene.annotation=NULL) {
   txdb <- getFromNamespace(gene.annotation, ns=gene.annotation)
   seqlevelsStyle(txdb) <- seqlevelsStyle(bins)[1]
   genes <- sort(keepStandardChromosomes(genes(txdb), pruning.mode = 'coarse'))
-  bins$numgenes <- countOverlaps(bins,genes)
-  bins$numgenes <- bins$numgenes + 1
+  genes <- reduce(genes)
+  hits <- findOverlaps(bins, genes)
+  overlaps <- as.data.table(pintersect(bins[queryHits(hits)], genes[subjectHits(hits)]))
+  overlaps <- overlaps[ , .(genecoverage=sum(width)), by=name]
+  bins <- merge(bins, overlaps, all=TRUE)
+  bins[is.na(bins$genecoverage)]$genecoverage <- 0
   bins
 }
 
