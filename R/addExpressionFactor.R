@@ -22,7 +22,8 @@ addExpressionFactor.GRanges <- function(bins, gene.annotation=NULL) {
   hits <- findOverlaps(bins, genes)
   overlaps <- as.data.table(pintersect(bins[queryHits(hits)], genes[subjectHits(hits)]))
   overlaps <- overlaps[ , .(genecoverage=sum(width)), by=name]
-  bins <- merge(bins, overlaps, all=TRUE)
+  print(overlaps)
+  bins <- as_granges(merge(bins, overlaps, all=TRUE))
   bins[is.na(bins$genecoverage)]$genecoverage <- 0
   bins
 }
