@@ -90,21 +90,23 @@ atacCNV <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapi
   }
 
   corrected_counts <- readRDS(file.path(outdir,"counts_gc_corrected.rds"))
+  peaks <- cbind(rowinfo, corrected_counts)
 
   if(!is.null(gene.annotation)) {
     rowinfo.gr <- rowRanges(counts)
     rowinfo.gr <- addExpressionFactor(rowinfo.gr, gene.annotation)
     print(rowinfo.gr)
     ## corrected_counts <- corrected_counts/rowinfo.gr$numgenes
-    corrected_counts <- corrected_counts[, lapply(.SD, function(x) {
-      # fit <- stats::loess(x ~ rowinfo.gr$numgenes)
-      fit <- stats::loess(x ~ rowinfo.gr$genecoverage)
-      correction <- mean(x) / fit$fitted
-      as.integer(round(x * correction))
-    })]
+    # corrected_counts <- corrected_counts[, lapply(.SD, function(x) {
+    #   # fit <- stats::loess(x ~ rowinfo.gr$numgenes)
+    #   fit <- stats::loess(x ~ rowinfo.gr$genecoverage)
+    #   correction <- mean(x) / fit$fitted
+    #   as.integer(round(x * correction))
+    # })]
+    peaks <- cbind(rowinfo, corrected_counts)
+    peaks <- peaks[peaks$genecoverage>0]
   }
 
-  peaks <- cbind(rowinfo, corrected_counts)
 
   zeroes_per_bin <- peaks[, rowSums(.SD==0), .SDcols = patterns("cell-")]
   ncells <- length(grep("cell-", colnames(peaks)))
