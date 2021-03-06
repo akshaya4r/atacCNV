@@ -103,7 +103,7 @@ atacCNV <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapi
     #   correction <- mean(x) / fit$fitted
     #   as.integer(round(x * correction))
     # })]
-    peaks <- cbind(rowinfo, corrected_counts)
+    peaks <- cbind(rowinfo.gr, corrected_counts)
     peaks <- peaks[peaks$genecoverage>0]
   }
 
