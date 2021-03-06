@@ -103,10 +103,9 @@ atacCNV <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapi
     #   correction <- mean(x) / fit$fitted
     #   as.integer(round(x * correction))
     # })]
-    peaks <- cbind(rowinfo.gr, corrected_counts)
+    peaks <- cbind(as.data.table(rowinfo.gr), corrected_counts)
     peaks <- peaks[peaks$genecoverage>0]
   }
-
 
   zeroes_per_bin <- peaks[, rowSums(.SD==0), .SDcols = patterns("cell-")]
   ncells <- length(grep("cell-", colnames(peaks)))
