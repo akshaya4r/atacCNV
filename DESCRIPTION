@@ -29,7 +29,8 @@ Depends:
     BiocGenerics,
     S4Vectors,
     ggplot2,
-    cowplot
+    cowplot,
+    parallel
 Imports: 
     GenomicAlignments,
     Matrix,
@@ -46,4 +47,5 @@ Imports:
     BiocGenerics,
     S4Vectors,
     ggplot2,
-    cowplot
+    cowplot,
+    parallel

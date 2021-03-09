@@ -14,6 +14,7 @@
 #' @import SummarizedExperiment
 #' @import magrittr
 #' @importFrom GenomicAlignments summarizeOverlaps
+#' @importFrom parallel mclapply
 #' @return \code{NULL}
 #' @export
 
@@ -37,7 +38,7 @@
 atacCNV <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapiens.UCSC.hg38",
                     test='AD', reuse.existing=FALSE, exclude=NULL, readout="ATAC",
                     uq=0.8, lq=0.5, somyl=0.2, somyu=0.8, title_karyo=NULL, minFrags = 20000,
-                    gene.annotation=NULL, threshold_blacklist_bins=0.85){
+                    gene.annotation=NULL, threshold_blacklist_bins=0.85, ncores=4){
 
   if(reuse.existing==FALSE){
     print("Removing old file from the output folder")
@@ -81,11 +82,11 @@ atacCNV <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapi
   peaks <- cbind(rowinfo, peaks)
 
   if(!file.exists(file.path(outdir,"counts_gc_corrected.rds"))) {
-    corrected_counts <- peaks[, lapply(.SD, function(x) {
+    corrected_counts <- peaks[, mclapply(.SD, function(x) {
       fit <- stats::loess(x ~ peaks$GC)
       correction <- mean(x) / fit$fitted
       as.integer(round(x * correction))
-    }), .SDcols = patterns("cell-")]
+    }, mc.cores = ncores), .SDcols = patterns("cell-")]
     saveRDS(corrected_counts, file.path(outdir,"counts_gc_corrected.rds"))
   }
 
@@ -97,12 +98,12 @@ atacCNV <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapi
     rowinfo.gr <- addExpressionFactor(rowinfo.gr, gene.annotation)
     print(rowinfo.gr)
     ## corrected_counts <- corrected_counts/rowinfo.gr$numgenes
-    # corrected_counts <- corrected_counts[, lapply(.SD, function(x) {
+    # corrected_counts <- corrected_counts[, mclapply(.SD, function(x) {
     #   # fit <- stats::loess(x ~ rowinfo.gr$numgenes)
     #   fit <- stats::loess(x ~ rowinfo.gr$genecoverage)
     #   correction <- mean(x) / fit$fitted
     #   as.integer(round(x * correction))
-    # })]
+    # }, mc.cores=ncores)]
     peaks <- cbind(as.data.table(rowinfo.gr), corrected_counts)
     peaks <- peaks[peaks$genecoverage>1]
   }
@@ -112,7 +113,7 @@ atacCNV <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapi
   peaks <- peaks[zeroes_per_bin<(threshold_blacklist_bins*ncells)]
 
   if(!file.exists(file.path(outdir,"results_gc_corrected.rds"))) {
-    clusters_ad <- peaks[, lapply(.SD, function(x) {
+    clusters_ad <- peaks[, mclapply(.SD, function(x) {
       k <- 3 # k produces 2^k - 1 breakpoints
       minsize <- 5
       peaksperchrom <- split(x, peaks$seqnames)
@@ -130,7 +131,7 @@ atacCNV <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapi
       #       cl <- cl + length(unique(item))
       # }
       # return(clusters)
-    }), .SDcols = patterns("cell-")]
+    }, mc.cores = ncores), .SDcols = patterns("cell-")]
     saveRDS(clusters_ad, file.path(outdir, "results_gc_corrected.rds"))
   }
   print("Successfully identified breakpoints")
