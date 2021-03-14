@@ -72,17 +72,19 @@ plot_karyo_gainloss <- function(somies_ad, outdir, peaks, uq=NULL, lq=NULL, titl
   somies_melted <- melt(somies.dt, id.vars=c('rn','seqnames'))
   somies_melted$value <- as.factor(paste0(somies_melted$value,'-somy'))
   counts_t <- t(somies.dt[ ,.SD, .SDcols=patterns('cell-')])
-  dist_matrix <- dist(counts_t)
-  dist_matrix[is.na(dist_matrix)] <- 0
-  hc_counts <- hclust(dist_matrix)
-  ord <- hc_counts$order
-  dhc <- stats::as.dendrogram(hc_counts)
-  ddata <- ggdendro::dendro_data(dhc, type = "rectangle")
-  ggdndr <- ggplot(ddata$segments) + geom_segment(aes_string(x='x', xend='xend', y='y', yend='yend')) + scale_y_reverse()
-  ggdndr <- ggdndr + coord_flip()
-  ggdndr <- ggdndr + theme(panel.background=element_blank(), axis.ticks=element_blank(), axis.text=element_blank(), axis.line=element_blank(), axis.title=element_blank())
-  somies_melted$variable <- factor(somies_melted$variable,
-                                   levels = names(somies_ad)[ord])
+  if(nrow(counts_t)>1){
+    dist_matrix <- dist(counts_t)
+    dist_matrix[is.na(dist_matrix)] <- 0
+    hc_counts <- hclust(dist_matrix)
+    ord <- hc_counts$order
+    dhc <- stats::as.dendrogram(hc_counts)
+    ddata <- ggdendro::dendro_data(dhc, type = "rectangle")
+    ggdndr <- ggplot(ddata$segments) + geom_segment(aes_string(x='x', xend='xend', y='y', yend='yend')) + scale_y_reverse()
+    ggdndr <- ggdndr + coord_flip()
+    ggdndr <- ggdndr + theme(panel.background=element_blank(), axis.ticks=element_blank(), axis.text=element_blank(), axis.line=element_blank(), axis.title=element_blank())
+    somies_melted$variable <- factor(somies_melted$variable,
+                                     levels = names(somies_ad)[ord])
+  }
   somycolours <- c(`0-somy` = "darkorchid3",
                    `1-somy` = "springgreen2",
                    `2-somy` = "red3")
