@@ -1,3 +1,21 @@
+#' Wrapper function for the \code{\link{AneuFinder}} package
+#'
+#' @param input Folder with bam files or a fragments.tsv file
+#' @param outdir Path to output directory
+#' @param blacklist Bed file with blacklisted regions
+#' @param windowSize Size of the window (Reccomended for sparse data - 1e6)
+#' @param genome String containing name of BS.genome object. Necessary for GC correction. Default: "BSgenome.Hsapiens.UCSC.hg38"
+#' @param test One of AD or KS. Anderson-Darling or Kolmogorov-Smirnov. Default: "AD"
+#' @param reuse.existing Logical. False removes all the files in the outdir and recomputes everything.
+#' @param exclude String of chromosomes to exclude. Example: c('chrX','chrY','chrM')
+#' @param readout String. One of "ATAC", "BS". Default: "ATAC"
+#' @param uq Upper quantile. Default: 0.1
+#' @param lq Lower quantile. Default: 0.9
+#' @param title_karyo String. Title of the output karyogram
+#' @param minFrags Integer. Minimum number of reads for a cell to pass. Only required for fragments.tsv file. Default: 20000
+#' @param gene.annotation String. Txdb object for gene presence correction. Set to NULL to not correct. Default: NULL
+#' @param threshold_blacklist_bins Blacklist a bin if more than the given ratio of cells have zero reads in the bin. Default: 0.85
+#' @param ncores Number of cores for parallelization. Default: 4
 #' @import stats
 #' @import GenomicRanges
 #' @import plyranges
@@ -16,6 +34,7 @@
 #' @importFrom GenomicAlignments summarizeOverlaps
 #' @importFrom parallel mclapply
 #' @return \code{NULL}
+#' @author Akshaya Ramakrishnan
 #' @export
 
 
@@ -37,7 +56,7 @@
 
 atacCNV <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapiens.UCSC.hg38",
                     test='AD', reuse.existing=FALSE, exclude=NULL, readout="ATAC",
-                    uq=0.8, lq=0.5, somyl=0.2, somyu=0.8, title_karyo=NULL, minFrags = 20000,
+                    uq=0.9, lq=0.5, somyl=0.1, somyu=0.8, title_karyo=NULL, minFrags = 20000,
                     gene.annotation=NULL, threshold_blacklist_bins=0.85, ncores=4){
 
   if(reuse.existing==FALSE){
