@@ -1,5 +1,4 @@
 #' @export
-
 threshold_dist_values <- function(result.dt) {
   result.dt$zscores <- scale(result.dt$per_chr_dist, center = TRUE, scale = TRUE)
   result.dt <- result.dt[zscores>0,]
@@ -29,6 +28,7 @@ threshold_dist_values <- function(result.dt) {
 #   return(CN.states)
 # }
 
+#' @export
 assign_somy <- function(seq_data, cluster, CNgrid.start=1.5, uq=0.8, lq=0.5, somyl=0.2, somyu=0.8){
   counts.normal <- seq_data
   qus_global <- quantile(seq_data, c(0.01, 0.98))
@@ -92,6 +92,7 @@ assign_somy <- function(seq_data, cluster, CNgrid.start=1.5, uq=0.8, lq=0.5, som
 #   return(CN.states)
 # }
 
+#' @export
 assign_gainloss <- function(seq_data, cluster, uq=0.8, lq=0.1) {
   counts.normal <- seq_data / mean(seq_data)
   counts.normal[counts.normal< 0] <- 0

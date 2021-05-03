@@ -155,68 +155,72 @@ atacCNV <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapi
   }
   print("Successfully identified breakpoints")
 
-  names_seq <- levels(peaks$seqnames)
+  if(!file.exists(file.path(outdir,"cnv_calls.rds"))) {
+    names_seq <- levels(peaks$seqnames)
 
-  clusters_ad <- readRDS(file.path(outdir,"results_gc_corrected.rds"))
-  breakpoints <- lapply(clusters_ad, function(x) { lapply(x,'[[', 1) })
-  distances <- lapply(clusters_ad, function(x) { lapply(x,'[[', 2) })
-  result.dt <- Map(function(bp, dist){
-    names(bp) <- names_seq
-    names(dist) <- names_seq
-    dtlist <- Map(function(per_chr_bp, per_chr_dist){
-      data.table(per_chr_bp, per_chr_dist)
-    }, bp, dist)
-    per_cell_dt <- rbindlist(dtlist, idcol = 'Chr')
-    per_cell_dt <- per_cell_dt[order(-per_chr_dist)]
-  }, breakpoints, distances)
+    clusters_ad <- readRDS(file.path(outdir,"results_gc_corrected.rds"))
+    breakpoints <- lapply(clusters_ad, function(x) { lapply(x,'[[', 1) })
+    distances <- lapply(clusters_ad, function(x) { lapply(x,'[[', 2) })
+    result.dt <- Map(function(bp, dist){
+      names(bp) <- names_seq
+      names(dist) <- names_seq
+      dtlist <- Map(function(per_chr_bp, per_chr_dist){
+        data.table(per_chr_bp, per_chr_dist)
+      }, bp, dist)
+      per_cell_dt <- rbindlist(dtlist, idcol = 'Chr')
+      per_cell_dt <- per_cell_dt[order(-per_chr_dist)]
+    }, breakpoints, distances)
 
-  pruned_result.dt <- lapply(result.dt, function(x){
-    threshold_dist_values(x)
-  })
-  print("Successfully discarded irrelevant breakpoints")
+    pruned_result.dt <- lapply(result.dt, function(x){
+      threshold_dist_values(x)
+    })
+    print("Successfully discarded irrelevant breakpoints")
 
 
-  clusters_pruned <- as.data.table(Map(function(seq_data, bp){
-    per_chrom_seq_data <- split(seq_data, peaks$seqnames)
-    per_chrom_bp <- split(bp, bp$Chr)
-    clusters_per_chrom <- Map(function(seq_data2, bp2){
-      if(is.null(bp2)){
-        return(rep(1, length(seq_data2)))
-      } else {
-        bp_to_cluster <- sort(c(1,length(seq_data2)+1,bp2$per_chr_bp))
-        return(rep(1:length(diff(bp_to_cluster)),diff(bp_to_cluster)))
+    clusters_pruned <- as.data.table(Map(function(seq_data, bp){
+      per_chrom_seq_data <- split(seq_data, peaks$seqnames)
+      per_chrom_bp <- split(bp, bp$Chr)
+      clusters_per_chrom <- Map(function(seq_data2, bp2){
+        if(is.null(bp2)){
+          return(rep(1, length(seq_data2)))
+        } else {
+          bp_to_cluster <- sort(c(1,length(seq_data2)+1,bp2$per_chr_bp))
+          return(rep(1:length(diff(bp_to_cluster)),diff(bp_to_cluster)))
+        }
+      }, per_chrom_seq_data[names_seq], per_chrom_bp[names_seq])
+      cl <- 0
+      clusters <- vector()
+      for(item in clusters_per_chrom){
+        item <- item + cl
+        clusters <- append(clusters, item)
+        cl <- cl + length(unique(item))
       }
-    }, per_chrom_seq_data[names_seq], per_chrom_bp[names_seq])
-    cl <- 0
-    clusters <- vector()
-    for(item in clusters_per_chrom){
-      item <- item + cl
-      clusters <- append(clusters, item)
-      cl <- cl + length(unique(item))
-    }
-    return(clusters)
-  },  peaks[, .SD, .SDcols = patterns("cell-")], pruned_result.dt))
+      return(clusters)
+    },  peaks[, .SD, .SDcols = patterns("cell-")], pruned_result.dt))
 
-  if(readout=="ATAC"){
-    somies_ad <- Map(function(seq_data,cluster) {
-      assign_gainloss(seq_data, cluster, uq=uq, lq=lq)
-    }, peaks[, .SD, .SDcols = patterns("cell-")], clusters_pruned)
-    print("Successfully assigned gain-loss")
-    if(is.null(title_karyo)){
-      title_karyo <- basename(outdir)
+    if(readout=="ATAC"){
+      somies_ad <- Map(function(seq_data,cluster) {
+        assign_gainloss(seq_data, cluster, uq=uq, lq=lq)
+      }, peaks[, .SD, .SDcols = patterns("cell-")], clusters_pruned)
+      print("Successfully assigned gain-loss")
     }
+    if(readout=="BS"){
+      somies_ad <- Map(function(seq_data,cluster) {
+        assign_somy(seq_data, cluster, uq=uq, lq=lq, somyl=somyl, somyu=somyu)
+      }, peaks[, .SD, .SDcols = patterns("cell-")], clusters_pruned)
+      print("Successfully assigned gain-loss")
+    }
+    saveRDS(somies_ad, file.path(outdir, "cnv_calls.rds"))
+  }
+
+  if(is.null(title_karyo)){
+    title_karyo <- basename(outdir)
+  }
+  if(readout=="ATAC"){
     plot_karyo_gainloss(somies_ad = somies_ad, outdir = outdir, peaks = peaks, uq, lq, title_karyo)
-    print("Successfully plotted karyogram")
   }
   if(readout=="BS"){
-    somies_ad <- Map(function(seq_data,cluster) {
-      assign_somy(seq_data, cluster, uq=uq, lq=lq, somyl=somyl, somyu=somyu)
-    }, peaks[, .SD, .SDcols = patterns("cell-")], clusters_pruned)
-    print("Successfully assigned gain-loss")
-    if(is.null(title_karyo)){
-      title_karyo <- basename(outdir)
-    }
     plot_karyo(somies_ad = somies_ad, outdir = outdir, peaks = peaks, uq, lq, somyl, somyu, title_karyo)
-    print("Successfully plotted karyogram")
   }
+  print("Successfully plotted karyogram")
 }

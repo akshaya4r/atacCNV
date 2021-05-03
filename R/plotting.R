@@ -1,5 +1,4 @@
 #' @export
-
 plot_karyo <- function(somies_ad, outdir, peaks, uq=NULL, lq=NULL, somyl=NULL, somyu=NULL, title_karyo=NULL){
   qc_dt <- data.table()
   qc_dt$spikiness <- sapply(peaks[, .SD, .SDcols = patterns("cell-")], qc.spikiness)
@@ -55,6 +54,7 @@ plot_karyo <- function(somies_ad, outdir, peaks, uq=NULL, lq=NULL, somyl=NULL, s
   # dev.off()
 }
 
+#' @export
 plot_karyo_gainloss <- function(somies_ad, outdir, peaks, uq=NULL, lq=NULL, title_karyo=NULL){
   qc_dt <- data.table()
   qc_dt$spikiness <- sapply(peaks[, .SD, .SDcols = patterns("cell-")], qc.spikiness)

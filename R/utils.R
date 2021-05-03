@@ -1,9 +1,9 @@
 #' @export
-
 splitAt <- function(x, pos) unname(split(x, cumsum(seq_along(x) %in% pos)))
 
 # "%ni%" <- function(){ Negate("%in%") }
 
+#' @export
 qc.spikiness <- function(counts) {
   if (is.null(counts)) {
     return(NA)
@@ -14,6 +14,7 @@ qc.spikiness <- function(counts) {
   return(spikiness)
 }
 
+#' @export
 qc.entropy <- function(counts) {
   if (is.null(counts)) {
     return(NA)
@@ -25,11 +26,12 @@ qc.entropy <- function(counts) {
   return(entropy)
 }
 
+#' @export
 qc.sos <- function(counts, somies) {
   sum(counts - somies) ^ 2
 }
 
-
+#' @export
 stateColors <- function(states=c('zero-inflation', paste0(0:10, '-somy'), 'total')) {
   state.colors <- c("zero-inflation"="gray90", "0-somy"="gray90",
                     "1-somy"="darkorchid3", "2-somy"="springgreen2",
