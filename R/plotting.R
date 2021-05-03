@@ -35,11 +35,12 @@ plot_karyo <- function(somies_ad, outdir, peaks, uq=NULL, lq=NULL, somyl=NULL, s
     facet_grid(cols=vars(seqnames), scales = 'free_x', space = 'free') +
     # labs(x="Position in chromosome", y="Cells", fill='Somy') +
     labs(x="Position in chromosome", fill='Somy', title = title_karyo, subtitle = text_subtitle) +
-    scale_fill_manual(values=AneuFinder::stateColors(states = unique(somies_melted$value))) +
+    scale_fill_manual(values=stateColors(states = unique(somies_melted$value))) +
     # scale_fill_gradient2() +
     theme(axis.ticks.x = element_blank(),
           axis.text.x = element_blank(),
           legend.position = 'none',
+          strip.text.x = element_text(size = 14),
           axis.title.y = element_blank(),
           axis.text.y = element_blank())
 
