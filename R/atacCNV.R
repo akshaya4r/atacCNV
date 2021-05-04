@@ -213,6 +213,7 @@ atacCNV <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapi
     saveRDS(somies_ad, file.path(outdir, "cnv_calls.rds"))
   }
 
+  somies_ad <- readRDS(file.path(outdir,"cnv_calls.rds"))
   if(is.null(title_karyo)){
     title_karyo <- basename(outdir)
   }
