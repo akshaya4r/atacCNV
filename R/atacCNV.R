@@ -1,4 +1,4 @@
-#' Wrapper function for the \code{\link{AneuFinder}} package
+#' Wrapper function for the \code{\link{atacCNV}} package
 #'
 #' @param input Folder with bam files or a fragments.tsv file
 #' @param outdir Path to output directory
