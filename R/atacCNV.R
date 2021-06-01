@@ -114,7 +114,14 @@ atacCNV <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapi
   rowinfo <- as.data.table(rowRanges(counts))
   peaks <- cbind(rowinfo, peaks)
 
+  if(!quick){
+    message("Correcting for effective bin length...")
+    peaks <- peaks[, round(.SD/percentEffectiveLength*100), .SDcols = patterns("cell-")]
+    peaks <- cbind(rowinfo, peaks)
+  }
+
   if(!file.exists(file.path(outdir,"counts_gc_corrected.rds"))) {
+    message("Correcting for GC bias...")
     corrected_counts <- peaks[, mclapply(.SD, function(x) {
       fit <- stats::loess(x ~ peaks$GC)
       correction <- mean(x) / fit$fitted

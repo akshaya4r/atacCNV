@@ -100,6 +100,7 @@ plot_karyo_gainloss <- function(somies_ad, outdir, peaks, uq=NULL, lq=NULL, titl
     theme(axis.ticks.x = element_blank(),
           axis.text.x = element_blank(),
           legend.position = 'none',
+          strip.text.x = element_text(size = 14),
           axis.title.y = element_blank(),
           axis.text.y = element_blank())
 
