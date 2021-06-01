@@ -57,7 +57,7 @@
 atacCNV <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapiens.UCSC.hg38",
                     test='AD', reuse.existing=FALSE, exclude=NULL, readout="ATAC",
                     uq=0.9, lq=0.5, somyl=0.1, somyu=0.8, title_karyo=NULL, minFrags = 20000,
-                    gene.annotation=NULL, threshold_blacklist_bins=0.85, ncores=4){
+                    gene.annotation=NULL, threshold_blacklist_bins=0.85, ncores=4, quick=TRUE){
 
   if(reuse.existing==FALSE){
     print("Removing old file from the output folder")
@@ -66,13 +66,22 @@ atacCNV <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapi
 
   if(!file.exists(file.path(outdir,"count_summary.rds"))) {
     blacklist <- read_bed(blacklist)
-    windows <- makeWindows(genome = genome, blacklist = blacklist, windowSize, exclude=exclude)
+    if(quick) {
+      windows <- makeWindows(genome = genome, blacklist = blacklist, windowSize, exclude=exclude)
+    } else {
+      windows <- makeWindows_accu(genome = genome, blacklist = blacklist, windowSize, exclude=exclude)
+    }
 
     if(file_test("-d", input)){
       print("Obtaining bam file list")
       bamfiles <- Rsamtools::BamFileList(list.files(input, pattern = ".bam$", full.names = TRUE), yieldSize=100000)
       print(bamfiles)
-      counts <- generateCountMatrix(bamfiles, windows)
+      if(quick) {
+        counts <- generateCountMatrix(bamfiles, windows)
+      } else {
+        counts <- generateCountMatrix_accu(bamfiles, windows)
+      }
+
     }
     else if(file_test("-f", input)){
       if(grepl("\\.tsv$", input)){
@@ -89,7 +98,12 @@ atacCNV <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapi
       } else{
         stop("Please provide a fragments .tsv/.bed or a path to the directory containing all the bam files")
       }
-      counts <- generateCountMatrix(fragments, windows, by="barcode", minFrags = minFrags)
+      if(quick) {
+        counts <- generateCountMatrix(fragments, windows, by="barcode", minFrags = minFrags)
+      } else {
+        counts <- generateCountMatrix_accu(fragments, windows, by="barcode", minFrags = minFrags)
+      }
+
     }
     saveRDS(counts, file.path(outdir,"count_summary.rds"))
   }
