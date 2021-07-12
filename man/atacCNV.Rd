@@ -2,7 +2,7 @@
 % Please edit documentation in R/atacCNV.R
 \name{atacCNV}
 \alias{atacCNV}
-\title{Wrapper function for the \code{\link{AneuFinder}} package}
+\title{Wrapper function for the \code{\link{atacCNV}} package}
 \usage{
 atacCNV(
   input,
@@ -22,7 +22,8 @@ atacCNV(
   minFrags = 20000,
   gene.annotation = NULL,
   threshold_blacklist_bins = 0.85,
-  ncores = 4
+  ncores = 4,
+  quick = TRUE
 )
 }
 \arguments{
@@ -62,7 +63,7 @@ atacCNV(
 \code{NULL}
 }
 \description{
-Wrapper function for the \code{\link{AneuFinder}} package
+Wrapper function for the \code{\link{atacCNV}} package
 }
 \author{
 Akshaya Ramakrishnan

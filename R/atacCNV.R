@@ -30,6 +30,7 @@
 #' @import ggplot2
 #' @import cowplot
 #' @import SummarizedExperiment
+#' @import R.utils
 #' @import magrittr
 #' @importFrom GenomicAlignments summarizeOverlaps
 #' @importFrom parallel mclapply
@@ -84,7 +85,7 @@ atacCNV <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapi
 
     }
     else if(file_test("-f", input)){
-      if(grepl("\\.tsv$", input)){
+      if(grepl("\\.tsv$|\\.tsv.gz$", input)){
         print("Obtaining the fragments tsv file")
         file_fragments <- fread(input)
         colnames(file_fragments) <- c('seqnames','start','end','barcode','pcr')

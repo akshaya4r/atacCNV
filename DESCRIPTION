@@ -48,4 +48,5 @@ Imports:
     S4Vectors,
     ggplot2,
     cowplot,
-    parallel
+    parallel,
+    R.utils
