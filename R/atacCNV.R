@@ -70,6 +70,7 @@ atacCNV <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapi
   if(!file.exists(file.path(outdir,"count_summary.rds"))) {
     blacklist <- read_bed(blacklist)
     # if(quick) {
+    # Bin the genome, remove blacklist info, exclude specific chromosomes
       windows <- makeWindows(genome = genome, blacklist = blacklist, windowSize, exclude=exclude)
     # } else {
     #  windows <- makeWindows_accu(genome = genome, blacklist = blacklist, windowSize, exclude=exclude)
@@ -80,7 +81,8 @@ atacCNV <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapi
       bamfiles <- Rsamtools::BamFileList(list.files(input, pattern = ".bam$", full.names = TRUE), yieldSize=100000)
       print(bamfiles)
       # if(quick) {
-        counts <- generateCountMatrix(bamfiles, windows)
+      # For the binned genome obtain the readcounts per bin
+      counts <- generateCountMatrix(bamfiles, windows)
       # } else {
       #  counts <- generateCountMatrix_accu(bamfiles, windows)
       # }
