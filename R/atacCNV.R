@@ -58,7 +58,7 @@
 atacCNV <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapiens.UCSC.hg38",
                     test='AD', reuse.existing=FALSE, exclude=NULL, readout="ATAC",
                     uq=0.9, lq=0.5, somyl=0.1, somyu=0.8, title_karyo=NULL, minFrags = 20000,
-                    gene.annotation=NULL, threshold_blacklist_bins=0.85, ncores=4, quick=TRUE){
+                    gene.annotation=NULL, threshold_blacklist_bins=0.85, ncores=4, minsize=1, k=3){
 
   if(reuse.existing==FALSE){
     print("Removing old file from the output folder")
@@ -67,21 +67,21 @@ atacCNV <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapi
 
   if(!file.exists(file.path(outdir,"count_summary.rds"))) {
     blacklist <- read_bed(blacklist)
-    if(quick) {
+    # if(quick) {
       windows <- makeWindows(genome = genome, blacklist = blacklist, windowSize, exclude=exclude)
-    } else {
-      windows <- makeWindows_accu(genome = genome, blacklist = blacklist, windowSize, exclude=exclude)
-    }
+    # } else {
+    #  windows <- makeWindows_accu(genome = genome, blacklist = blacklist, windowSize, exclude=exclude)
+    # }
 
     if(file_test("-d", input)){
       print("Obtaining bam file list")
       bamfiles <- Rsamtools::BamFileList(list.files(input, pattern = ".bam$", full.names = TRUE), yieldSize=100000)
       print(bamfiles)
-      if(quick) {
+      # if(quick) {
         counts <- generateCountMatrix(bamfiles, windows)
-      } else {
-        counts <- generateCountMatrix_accu(bamfiles, windows)
-      }
+      # } else {
+      #  counts <- generateCountMatrix_accu(bamfiles, windows)
+      # }
 
     }
     else if(file_test("-f", input)){
@@ -99,11 +99,11 @@ atacCNV <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapi
       } else{
         stop("Please provide a fragments .tsv/.bed or a path to the directory containing all the bam files")
       }
-      if(quick) {
-        counts <- generateCountMatrix(fragments, windows, by="barcode", minFrags = minFrags)
-      } else {
-        counts <- generateCountMatrix_accu(fragments, windows, by="barcode", minFrags = minFrags)
-      }
+      # if(quick) {
+      counts <- generateCountMatrix(fragments, windows, by="barcode", minFrags = minFrags)
+      # } else {
+      #   counts <- generateCountMatrix_accu(fragments, windows, by="barcode", minFrags = minFrags)
+      # }
 
     }
     saveRDS(counts, file.path(outdir,"count_summary.rds"))
@@ -115,11 +115,11 @@ atacCNV <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapi
   rowinfo <- as.data.table(rowRanges(counts))
   peaks <- cbind(rowinfo, peaks)
 
-  if(!quick){
-    message("Correcting for effective bin length...")
-    peaks <- peaks[, round(.SD/percentEffectiveLength*100), .SDcols = patterns("cell-")]
-    peaks <- cbind(rowinfo, peaks)
-  }
+  # if(!quick){
+  #  message("Correcting for effective bin length...")
+  #  peaks <- peaks[, round(.SD/percentEffectiveLength*100), .SDcols = patterns("cell-")]
+  #  peaks <- cbind(rowinfo, peaks)
+  # }
 
   if(!file.exists(file.path(outdir,"counts_gc_corrected.rds"))) {
     message("Correcting for GC bias...")
@@ -134,20 +134,20 @@ atacCNV <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapi
   corrected_counts <- readRDS(file.path(outdir,"counts_gc_corrected.rds"))
   peaks <- cbind(rowinfo, corrected_counts)
 
-  if(!is.null(gene.annotation)) {
-    rowinfo.gr <- rowRanges(counts)
-    rowinfo.gr <- addExpressionFactor(rowinfo.gr, gene.annotation)
-    print(rowinfo.gr)
-    ## corrected_counts <- corrected_counts/rowinfo.gr$numgenes
-    # corrected_counts <- corrected_counts[, mclapply(.SD, function(x) {
-    #   # fit <- stats::loess(x ~ rowinfo.gr$numgenes)
-    #   fit <- stats::loess(x ~ rowinfo.gr$genecoverage)
-    #   correction <- mean(x) / fit$fitted
-    #   as.integer(round(x * correction))
-    # }, mc.cores=ncores)]
-    peaks <- cbind(as.data.table(rowinfo.gr), corrected_counts)
-    peaks <- peaks[peaks$genecoverage>1]
-  }
+  # if(!is.null(gene.annotation)) {
+  #   rowinfo.gr <- rowRanges(counts)
+  #   rowinfo.gr <- addExpressionFactor(rowinfo.gr, gene.annotation)
+  #   print(rowinfo.gr)
+  #   ## corrected_counts <- corrected_counts/rowinfo.gr$numgenes
+  #   # corrected_counts <- corrected_counts[, mclapply(.SD, function(x) {
+  #   #   # fit <- stats::loess(x ~ rowinfo.gr$numgenes)
+  #   #   fit <- stats::loess(x ~ rowinfo.gr$genecoverage)
+  #   #   correction <- mean(x) / fit$fitted
+  #   #   as.integer(round(x * correction))
+  #   # }, mc.cores=ncores)]
+  #   peaks <- cbind(as.data.table(rowinfo.gr), corrected_counts)
+  #   peaks <- peaks[peaks$genecoverage>1]
+  # }
 
   zeroes_per_bin <- peaks[, rowSums(.SD==0), .SDcols = patterns("cell-")]
   ncells <- length(grep("cell-", colnames(peaks)))
@@ -155,8 +155,8 @@ atacCNV <- function(input, outdir, blacklist, windowSize, genome="BSgenome.Hsapi
 
   if(!file.exists(file.path(outdir,"results_gc_corrected.rds"))) {
     clusters_ad <- peaks[, mclapply(.SD, function(x) {
-      k <- 3 # k produces 2^k - 1 breakpoints
-      minsize <- 5
+      # k <- 3 # k produces 2^k - 1 breakpoints
+      # minsize <- 5
       peaksperchrom <- split(x, peaks$seqnames)
       print("Calculating distance AD")
       results <- lapply(peaksperchrom, function(x2) {

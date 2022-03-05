@@ -1,6 +1,6 @@
 #' @export
 
-getbp <- function(seq_data, minsize=5, k=3, test='AD'){
+getbp <- function(seq_data, minsize=1, k=3, test='AD'){
   bp <- vector()
   distbp <- vector()
   for(iter in 1:k) {
