@@ -1,4 +1,6 @@
 #' @export
+#' @param reads bamfile or fragments file of sequencing information
+#' @param windows Binned genome
 
 generateCountMatrix <- function(reads, windows, by=NULL, minFrags=NULL){
 

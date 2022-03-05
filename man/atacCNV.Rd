@@ -23,7 +23,8 @@ atacCNV(
   gene.annotation = NULL,
   threshold_blacklist_bins = 0.85,
   ncores = 4,
-  quick = TRUE
+  minsize = 1,
+  k = 3
 )
 }
 \arguments{
@@ -58,6 +59,10 @@ atacCNV(
 \item{threshold_blacklist_bins}{Blacklist a bin if more than the given ratio of cells have zero reads in the bin. Default: 0.85}
 
 \item{ncores}{Number of cores for parallelization. Default: 4}
+
+\item{minsize}{Integer. Resolution at the level of ins. Default: 1. Setting it to higher numbers runs the algorithm faster at the cost of resolution}
+
+\item{k}{Integer. Find 2^k segments per chromosome}
 }
 \value{
 \code{NULL}

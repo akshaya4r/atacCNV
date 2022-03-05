@@ -29,6 +29,9 @@ threshold_dist_values <- function(result.dt) {
 # }
 
 #' @export
+#' @param seq_data Sequential data - Counts per bin
+#' @param cluster Id for the different segments
+#' @param CNgrid.start If cells are disomic start the grid at 1.5
 assign_somy <- function(seq_data, cluster, CNgrid.start=1.5, uq=0.8, lq=0.5, somyl=0.2, somyu=0.8){
   counts.normal <- seq_data
   qus_global <- quantile(seq_data, c(0.01, 0.98))
@@ -93,6 +96,10 @@ assign_somy <- function(seq_data, cluster, CNgrid.start=1.5, uq=0.8, lq=0.5, som
 # }
 
 #' @export
+#' @param seq_data Sequential data - Counts per bin
+#' @param cluster Vector showing segment identity
+#' @param uq Upper quantile to trim to calculate the cluster means
+#' @param lq Lower quantile to trim to calculate the cluster means
 assign_gainloss <- function(seq_data, cluster, uq=0.8, lq=0.1) {
   counts.normal <- seq_data / mean(seq_data)
   counts.normal[counts.normal< 0] <- 0

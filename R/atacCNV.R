@@ -16,6 +16,8 @@
 #' @param gene.annotation String. Txdb object for gene presence correction. Set to NULL to not correct. Default: NULL
 #' @param threshold_blacklist_bins Blacklist a bin if more than the given ratio of cells have zero reads in the bin. Default: 0.85
 #' @param ncores Number of cores for parallelization. Default: 4
+#' @param minsize Integer. Resolution at the level of ins. Default: 1. Setting it to higher numbers runs the algorithm faster at the cost of resolution
+#' @param k Integer. Find 2^k segments per chromosome
 #' @import stats
 #' @import GenomicRanges
 #' @import plyranges

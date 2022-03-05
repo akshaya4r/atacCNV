@@ -1,6 +1,10 @@
 #' @export
+#' @param genome String containing name of BS.genome object. Necessary for GC correction. Default: "BSgenome.Hsapiens.UCSC.hg38"
+#' @param blacklist Granges object with information about blacklisted regions in the genome.
+#' @param windowSize Size in basepairs for a bin
+#' @param exclude Chromosomes to exclude
 
-makeWindows <- function(genome, blacklist, windowSize, slidingSize = 2e6, exclude = NULL){
+makeWindows <- function(genome, blacklist, windowSize, exclude = NULL){
   #chromSizes <- GRanges(names(seqlengths(genome)), IRanges(1, seqlengths(genome)))
   #chromSizes <- GenomeInfoDb::keepStandardChromosomes(chromSizes, pruning.mode = "coarse")
   #windows <- slidingWindows(x = chromSizes, width = windowSize, step = slidingSize) %>% unlist %>% .[which(width(.)==windowSize),]

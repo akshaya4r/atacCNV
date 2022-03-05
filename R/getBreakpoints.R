@@ -1,5 +1,7 @@
 #' @export
-
+#' @param seq_data Sequential data - Counts per bin for a chromosome
+#' @param minsize Integer. Resolution at the level of ins. Default: 1. Setting it to higher numbers runs the algorithm faster at the cost of resolution
+#' @param k Integer. Find 2^k segments per chromosome
 getbp <- function(seq_data, minsize=1, k=3, test='AD'){
   bp <- vector()
   distbp <- vector()

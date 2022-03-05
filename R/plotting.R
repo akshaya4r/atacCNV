@@ -9,6 +9,7 @@ plot_karyo <- function(somies_ad, outdir, peaks, uq=NULL, lq=NULL, somyl=NULL, s
   qc_dt$libsize <- sapply(peaks[, .SD, .SDcols = patterns("cell-")], sum)
   print(dim(qc_dt))
   somies.dt <- as.data.table(somies_ad)
+  write.table(somies.dt, file = file.path(outdir, results_table.tsv), quote = FALSE)
   print(dim(somies.dt))
   # somies.dt <- as.data.table(lapply(somies.dt, function(x) {scale(x, center=TRUE, scale=TRUE)}))
   qc_dt$name <- colnames(somies.dt)
@@ -55,6 +56,9 @@ plot_karyo <- function(somies_ad, outdir, peaks, uq=NULL, lq=NULL, somyl=NULL, s
 }
 
 #' @export
+#' @param somies_ad A list containing the somy per bin of each cell
+#' @param outdir Directory where the output karyogram is to be saved
+#' @param peaks Dataframe containing bin information
 plot_karyo_gainloss <- function(somies_ad, outdir, peaks, uq=NULL, lq=NULL, title_karyo=NULL){
   qc_dt <- data.table()
   qc_dt$spikiness <- sapply(peaks[, .SD, .SDcols = patterns("cell-")], qc.spikiness)
@@ -65,6 +69,7 @@ plot_karyo_gainloss <- function(somies_ad, outdir, peaks, uq=NULL, lq=NULL, titl
   qc_dt$libsize <- sapply(peaks[, .SD, .SDcols = patterns("cell-")], sum)
   print(dim(qc_dt))
   somies.dt <- as.data.table(somies_ad)
+  write.table(somies.dt, file = file.path(outdir, results_table.tsv), quote = FALSE)
   print(dim(somies.dt))
   # somies.dt <- as.data.table(lapply(somies.dt, function(x) {scale(x, center=TRUE, scale=TRUE)}))
   qc_dt$name <- colnames(somies.dt)
